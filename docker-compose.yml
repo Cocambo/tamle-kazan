@@ -28,10 +28,14 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: frontend
     ports:
-      - "5173:80"
+      - "5173:5173"
+    volumes:
+    - ./frontend:/app
+    - /app/node_modules
+    command: npm run dev -- --host
     depends_on:
       - api-gateway
     networks:
