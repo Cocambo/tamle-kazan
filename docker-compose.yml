@@ -1,0 +1,42 @@
+services:
+  api-gateway:
+    build:
+      context: ./backend/api-gateway-service
+      dockerfile: Dockerfile
+    container_name: api-gateway-service
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./backend/api-gateway-service/.env
+    networks:
+      - tamle-net
+    depends_on:
+      - user-service
+
+  user-service:
+    build:
+      context: ./backend/user-service
+      dockerfile: Dockerfile
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    env_file:
+      - ./backend/user-service/.env
+    networks:
+      - tamle-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - tamle-net
+
+networks:
+  tamle-net:
+    driver: bridge
