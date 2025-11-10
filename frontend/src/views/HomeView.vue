@@ -43,14 +43,14 @@ import TopRestaurantsComponent from "@components/TopRestaurantsComponent.vue";
   position: relative;
   z-index: 2;
   max-width: 800px;
-  padding: 0px 40px;
+  padding: 0px 80px;
   margin-top: 0px;
 }
 
 .hero-title {
   font-family: "Cormorant Garamond", serif;
   font-weight: 700;
-  font-size: 64px;
+  font-size: 75px;
   line-height: 1.2;
   margin-bottom: 20px;
   color: white;

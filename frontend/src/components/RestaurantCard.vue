@@ -1,13 +1,15 @@
 <template>
-  <v-card class="restaurant-card" flat rounded="xl">
-    <v-img :src="image" class="restaurant-image" height="350" cover>
+  <div class="restaurant-card" :style="{ backgroundImage: `url(${image})` }">
+    <div class="overlay"></div>
+
+    <div class="card-content pa-4">
       <v-btn
         icon
-        size="small"
+        variant="text"
         class="favorite-btn"
         @click.stop="toggleFavorite"
       >
-        <v-icon :color="isFavorite ? 'red' : 'white'">
+        <v-icon color="white" size="30">
           {{ isFavorite ? "mdi-heart" : "mdi-heart-outline" }}
         </v-icon>
       </v-btn>
@@ -16,16 +18,16 @@
         <div class="restaurant-name">{{ name }}</div>
         <v-btn
           icon
-          size="small"
+          variant="text"
           color="white"
           class="arrow-btn"
-          @click="goToRestaurant"
+          @click.stop="goToRestaurant"
         >
-          <v-icon>mdi-arrow-right</v-icon>
+          <v-icon size="30">mdi-arrow-right</v-icon>
         </v-btn>
       </div>
-    </v-img>
-  </v-card>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -46,35 +48,53 @@ function toggleFavorite() {
 }
 
 function goToRestaurant() {
-  // Можно позже заменить на реальный роут
   console.log(`Переход к ресторану: ${props.name}`);
   // router.push(`/restaurant/${props.id}`);
 }
 </script>
 
-<style scoped>
+<style>
 .restaurant-card {
   position: relative;
+  height: 400px;
+  width: 300px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 0;
+  cursor: pointer;
   overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease;
 }
 
-.restaurant-image {
+.restaurant-card:hover {
+  transform: scale(1.02);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 1;
+}
+
+.card-content {
   position: relative;
-  border-radius: 20px;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .favorite-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 2;
+  align-self: flex-end;
 }
 
 .card-bottom {
-  position: absolute;
-  bottom: 10px;
-  left: 20px;
-  right: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -83,8 +103,10 @@ function goToRestaurant() {
 
 .restaurant-name {
   font-family: "Cormorant Garamond", serif;
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  padding-left: 12px;
 }
 
 .arrow-btn {

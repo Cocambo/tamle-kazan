@@ -5,83 +5,106 @@
       <p class="section-subtitle">Выбор наших клиентов</p>
     </div>
 
-    <v-container fluid class="cards-container">
-      <v-row justify="center" align="stretch" dense>
-        <v-col
-          v-for="(restaurant, index) in restaurants"
-          :key="index"
-          cols="12"
-          md="4"
-        >
-          <RestaurantCard
-            :name="restaurant.name"
-            :image="restaurant.image"
-            :id="restaurant.id"
-          />
-        </v-col>
-      </v-row>
-
-      <div class="button-container">
-        <v-btn color="olive" class="all-btn" rounded="lg" variant="flat">
-          Все рестораны
-        </v-btn>
+    <v-container
+      class="cards-container d-flex align-center justify-space-between flex-wrap"
+    >
+      <div
+        v-for="(restaurant, index) in restaurants"
+        :key="index"
+        class="card-wrapper"
+      >
+        <RestaurantCard
+          :name="restaurant.name"
+          :image="restaurant.image"
+          :id="restaurant.id"
+        />
       </div>
     </v-container>
+
+    <div class="button-container">
+      <v-btn color="primary" class="all-btn" rounded="0"> Все рестораны </v-btn>
+    </div>
+
+    <img src="@/assets/branch.png" alt="decor branch" class="decor-branch" />
   </section>
 </template>
 
 <script setup>
 import RestaurantCard from "@/components/RestaurantCard.vue";
+import olioImg from "@/assets/olio.jpg";
+import diaImg from "@/assets/dia2.jpg";
+import terraImg from "@/assets/terra.jpg";
 
 const restaurants = [
-  { id: 1, name: "Olio", image: "@/assets/olio.jpg" },
-  { id: 2, name: "Dia", image: "@/assets/dia.jpg" },
-  { id: 3, name: "Terra et Silva", image: "@/assets/terra.jpg" },
+  { id: 1, name: "Olio", image: olioImg },
+  { id: 2, name: "Dia", image: diaImg },
+  { id: 3, name: "Terra et Silva", image: terraImg },
 ];
 </script>
 
-<style scoped>
+<style>
 .top-restaurants-section {
-  padding: 80px 0;
-  background-color: #fff;
   position: relative;
+  padding: 30px 0 80px;
+  background-color: #fff;
+  overflow: hidden;
 }
 
 .title-container {
   text-align: left;
   margin-left: 60px;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 
 .section-title {
   font-family: "Cormorant Garamond", serif;
   font-weight: 700;
-  font-size: 56px;
+  font-size: 64px;
   margin-bottom: 10px;
-  color: #1a1a1a;
+  color: #000;
 }
 
 .section-subtitle {
-  color: #666;
+  color: #4d4d4d;
   font-size: 18px;
-  font-family: "Cormorant Garamond", serif;
 }
 
 .cards-container {
   max-width: 1200px;
   margin: 0 auto;
+  gap: 24px;
+}
+
+.card-wrapper {
+  flex: 1 1 30%;
+  display: flex;
+  justify-content: center;
 }
 
 .button-container {
   text-align: center;
-  margin-top: 40px;
+  margin-top: 60px;
 }
 
 .all-btn {
-  background-color: #3b4a1d !important;
-  color: white !important;
-  padding: 12px 32px;
-  font-size: 18px;
+  background-color: rgb(var(--v-theme-primary));
+  color: white;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 16px;
   font-family: "Cormorant Garamond", serif;
+}
+
+.decor-branch {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 600px;
+  opacity: 0.9;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  transform: scaleX(-1);
+  transform: rotate(180deg);
 }
 </style>

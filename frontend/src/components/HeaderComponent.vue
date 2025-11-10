@@ -58,7 +58,7 @@
 
 .register-btn {
   border: 1px solid white;
-  font-size: 15px;
+  font-size: 18px;
   text-transform: none;
   letter-spacing: 0;
 }
