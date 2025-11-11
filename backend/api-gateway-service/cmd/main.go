@@ -11,6 +11,6 @@ func main() {
 		fmt.Fprintln(w, "API Gateway is running!")
 	})
 
-	fmt.Println("Listening on :8080...")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	fmt.Println("Listening on :8081...")
+	log.Fatal(http.ListenAndServe(":8081", nil))
 }

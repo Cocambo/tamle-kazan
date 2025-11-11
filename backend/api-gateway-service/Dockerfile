@@ -3,7 +3,7 @@ FROM golang:1.25.3-alpine AS builder
 
 WORKDIR /app 
 
- # Копируем файлы зависимостей и скачиваем модули
+# Копируем файлы зависимостей и скачиваем модули
 COPY go.mod go.sum ./
 RUN go mod download
 
@@ -22,7 +22,7 @@ WORKDIR /app
 COPY --from=builder /app/api-gateway-service .
 COPY --from=builder /app/.env .
 
-EXPOSE 8080
+EXPOSE 8081
 
 # Команда по умолчанию
 CMD ["./api-gateway-service"]
