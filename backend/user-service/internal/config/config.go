@@ -21,9 +21,13 @@ var AppConfig Config
 
 func LoadConfig() {
 	// Загружаем .env
-	if err := godotenv.Load(".env"); err != nil {
+	if err := godotenv.Load(); err != nil {
 		log.Println(".env file is not found")
 	}
+
+	// if err := godotenv.Load(".env"); err != nil {
+	// 	log.Println(".env file is not found")
+	// }
 
 	AppConfig = Config{
 		PostgresHost:     getEnv("POSTGRES_HOST", "localhost"),

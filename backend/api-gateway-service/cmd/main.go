@@ -3,14 +3,20 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
+
+	"github.com/Cocambo/tamle-kazan/backend/api-gateway-service/internal/config"
+	"github.com/Cocambo/tamle-kazan/backend/api-gateway-service/internal/router"
 )
 
 func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "API Gateway is running!")
-	})
+	config.LoadConfig()
 
-	fmt.Println("Listening on :8081...")
-	log.Fatal(http.ListenAndServe(":8081", nil))
+	r := router.SetupRouter()
+
+	port := config.AppConfig.ServerPort
+	log.Printf("API Gateway running on port %s", port)
+
+	if err := r.Run(fmt.Sprintf(":%s", port)); err != nil {
+		log.Fatalf("Failed to start API Gateway: %v", err)
+	}
 }
