@@ -5,13 +5,21 @@
     <div class="overlay"></div>
 
     <div class="hero-content align-start">
-      <h1 class="hero-title">Ваш гастрономический компас в Казани</h1>
+      <h1 class="hero-title">
+        Ваш <br />
+        гастрономический <br />компас в Казани
+      </h1>
       <p class="hero-subtitle">Воплощаем искусство комфортной гастрономии</p>
     </div>
   </section>
+  <TopRestaurantsComponent />
 </template>
 
-<style scoped>
+<script setup>
+import TopRestaurantsComponent from "@components/TopRestaurantsComponent.vue";
+</script>
+
+<style>
 .hero-section {
   position: relative;
   height: 100vh;
@@ -35,14 +43,14 @@
   position: relative;
   z-index: 2;
   max-width: 800px;
-  padding: 0 20px;
-  margin-top: 200px;
+  padding: 0px 80px;
+  margin-top: 0px;
 }
 
 .hero-title {
   font-family: "Cormorant Garamond", serif;
   font-weight: 700;
-  font-size: 64px;
+  font-size: 75px;
   line-height: 1.2;
   margin-bottom: 20px;
   color: white;
