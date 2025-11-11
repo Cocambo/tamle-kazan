@@ -144,7 +144,7 @@ const register = () => {
 };
 </script>
 
-<style scoped>
+<style>
 .register {
   background-image: url("@/assets/branch.png");
   background-repeat: no-repeat;

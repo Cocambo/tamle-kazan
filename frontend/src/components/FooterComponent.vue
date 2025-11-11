@@ -109,13 +109,4 @@
   flex-direction: column;
   justify-content: center;
 }
-
-@media (max-width: 960px) {
-  .footer {
-    text-align: center;
-  }
-  .footer-branch {
-    display: none;
-  }
-}
 </style>
