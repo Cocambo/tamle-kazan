@@ -13,19 +13,20 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Используем jwtSecret для подписи токенов
 var jwtSecret = []byte(config.AppConfig.JwtSecret)
 
 // Register — создание нового пользователя
 //
-// POST localhost:8080/register
-func Register(c *gin.Context) {
-	var input struct {
+// POST /register
+func Register(c *gin.Context) { // Используем Gin
+	var input struct { // принимаем тело запроса, Gin автоматически проверит обязательность полей и формат email.
 		FirstName string `json:"first_name" binding:"required"`
 		LastName  string `json:"last_name" binding:"required"`
 		Email     string `json:"email" binding:"required,email"`
 		Password  string `json:"password" binding:"required,min=6"`
 	}
-
+	// Парсинг и валидация JSON-запроса
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -53,6 +54,7 @@ func Register(c *gin.Context) {
 		Role:      "user",
 	}
 
+	// Создаем пользователя
 	if err := database.DB.Create(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
 		return
@@ -63,18 +65,18 @@ func Register(c *gin.Context) {
 
 // Login — проверка email/пароля и выдача JWT
 //
-// POST localhost:8080/login
+// POST /login
 func Login(c *gin.Context) {
-	var input struct {
+	var input struct { // принимаем тело запроса, Gin автоматически проверит обязательность полей и формат email.
 		Email    string `json:"email" binding:"required,email"`
 		Password string `json:"password" binding:"required"`
 	}
-
+	// Парсинг и валидация JSON-запроса
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
+	// Проверяем существует ли пользователь
 	var user models.User
 	if err := database.DB.Where("email = ?", input.Email).First(&user).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid email or password"})
@@ -94,6 +96,7 @@ func Login(c *gin.Context) {
 		"exp":     time.Now().Add(24 * time.Hour).Unix(),
 	})
 
+	// Подписываем JWT токен
 	tokenString, err := token.SignedString(jwtSecret)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})

@@ -15,6 +15,6 @@ func AdminMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		c.Next()
+		c.Next() // разрешает проходить дальше только тем,у кого в контексте Gin role = "admin".
 	}
 }

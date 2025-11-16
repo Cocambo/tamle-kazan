@@ -11,10 +11,12 @@ import (
 	"gorm.io/gorm"
 )
 
+// Хранит подключение к базе данных
 var DB *gorm.DB
 
 // InitDB — подключение к PostgreSQL через GORM
 func InitDB() {
+	// Формирум DSN (Data Source Name), строку для подключения к БД
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 		config.AppConfig.PostgresHost,
@@ -24,6 +26,7 @@ func InitDB() {
 		config.AppConfig.PostgresPort,
 	)
 
+	//Открываем соединение с БД
 	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -33,7 +36,7 @@ func InitDB() {
 	log.Println("Connect to database succesful")
 }
 
-// Migrate — выполняет миграцию моделей
+// Migrate выполняет миграцию моделей
 func Migrate() {
 	err := DB.AutoMigrate(&models.User{})
 	if err != nil {

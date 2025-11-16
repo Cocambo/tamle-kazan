@@ -10,7 +10,10 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-// AuthMiddleware проверяет JWT токен и извлекает user_id и role
+// AuthMiddleware проверяет JWT токен в заголовке.
+// Валидирует его с помощью секрета.
+//
+// Извлекает user_id и role и помещает в контекст Gin
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
