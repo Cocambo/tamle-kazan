@@ -8,28 +8,25 @@ import (
 )
 
 type Config struct {
-	ServerPort     string
-	UserServiceURL string
+	ServerPort      string
+	JwtSecret       string
+	UserServiceURL  string
+	OrderServiceURL string
 }
 
-var AppConfig Config
-
-func LoadConfig() {
-	// Загружаем .env если есть
+func LoadConfig() (*Config, error) {
 	if err := godotenv.Load(); err != nil {
-		log.Println(".env file not found, using system environment variables")
+		log.Println(".env not found, using environment variables")
 	}
 
-	// if err := godotenv.Load(".env"); err != nil {
-	// 	log.Println(".env file not found, using system environment variables")
-	// }
-
-	AppConfig = Config{
-		ServerPort:     getEnv("SERVER_PORT", "8081"),
-		UserServiceURL: getEnv("USER_SERVICE_URL", "http://user-service:8080"),
+	cfg := &Config{
+		ServerPort:      getEnv("SERVER_PORT", "8080"),
+		JwtSecret:       getEnv("JWT_SECRET", "d8f3b4e7a01c2f8f64ad3e7b9c61d39a5f27cf8f9272b9a18c3a77d4a2b3e9cf"),
+		UserServiceURL:  getEnv("USER_SERVICE_URL", "http://localhost:8081"),
+		OrderServiceURL: getEnv("ORDER_SERVICE_URL", "http://localhost:8082"),
 	}
 
-	log.Printf("Loaded config: port=%s, user-service=%s", AppConfig.ServerPort, AppConfig.UserServiceURL)
+	return cfg, nil
 }
 
 func getEnv(key, defaultValue string) string {

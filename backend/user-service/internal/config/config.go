@@ -25,17 +25,13 @@ func LoadConfig() {
 		log.Println(".env file is not found")
 	}
 
-	// if err := godotenv.Load(".env"); err != nil {
-	// 	log.Println(".env file is not found")
-	// }
-
 	AppConfig = Config{
 		PostgresHost:     getEnv("POSTGRES_HOST", "localhost"),
 		PostgresPort:     getEnv("POSTGRES_PORT", "5432"),
 		PostgresUser:     getEnv("POSTGRES_USER", "postgres"),
 		PostgresPassword: getEnv("POSTGRES_PASSWORD", "password"),
 		PostgresDB:       getEnv("POSTGRES_DB", "user_service"),
-		ServerPort:       getEnv("SERVER_PORT", "8080"),
+		ServerPort:       getEnv("SERVER_PORT", "8081"),
 		JwtSecret:        getEnv("JWT_SECRET", "secret"),
 	}
 }

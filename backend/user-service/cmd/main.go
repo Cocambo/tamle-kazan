@@ -41,7 +41,7 @@ func main() {
 	// Запуск HTTP-сервера
 	port := config.AppConfig.ServerPort
 	if port == "" {
-		port = "8080"
+		port = "8081"
 	}
 
 	log.Printf("Server start on port %s", port)
