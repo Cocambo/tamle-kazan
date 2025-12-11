@@ -15,6 +15,12 @@ type Config struct {
 	PostgresDB       string
 	ServerPort       string
 	JwtSecret        string
+	SMTPHost         string
+	SMTPPort         string
+	SMTPUser         string
+	SMTPPass         string
+	SMTPFrom         string
+	AppBaseURL       string
 }
 
 var AppConfig Config
@@ -32,7 +38,13 @@ func LoadConfig() {
 		PostgresPassword: getEnv("POSTGRES_PASSWORD", "password"),
 		PostgresDB:       getEnv("POSTGRES_DB", "user_service"),
 		ServerPort:       getEnv("SERVER_PORT", "8081"),
-		JwtSecret:        getEnv("JWT_SECRET", "secret"),
+		JwtSecret:        getEnv("JWT_SECRET", ""),
+		SMTPHost:         getEnv("SMTP_HOST", ""),
+		SMTPPort:         getEnv("SMTP_PORT", "587"),
+		SMTPUser:         getEnv("SMTP_USER", ""),
+		SMTPPass:         getEnv("SMTP_PASS", ""),
+		SMTPFrom:         getEnv("SMTP_FROM", "no-reply@example.com"),
+		AppBaseURL:       getEnv("APP_BASE_URL", "http://localhost:8081"),
 	}
 }
 

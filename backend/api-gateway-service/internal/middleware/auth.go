@@ -14,6 +14,7 @@ import (
 //
 // При ошибке возвращает 401 и завершает обработку.
 func JWTMiddleware(jwtSecret string) gin.HandlerFunc {
+
 	return func(c *gin.Context) {
 		// Извлечение токена из заголовка Authorization, в случае отсутствия, возвращаем 401
 		authHeader := c.GetHeader("Authorization")
@@ -31,10 +32,14 @@ func JWTMiddleware(jwtSecret string) gin.HandlerFunc {
 		}
 		// Извлечение самого токена
 		tokenString := parts[1]
+
+		// Создание структуры для хранения claims
+		claims := jwt.MapClaims{}
+
 		// Проверка подписи и парсинг токена
 		token, err := jwt.ParseWithClaims(
 			tokenString,
-			&jwt.RegisteredClaims{},
+			claims,
 			func(token *jwt.Token) (interface{}, error) {
 				// Проверяем ожидаемый алгоритм подписи
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -47,6 +52,15 @@ func JWTMiddleware(jwtSecret string) gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
 			c.Abort()
 			return
+		}
+
+		// Извлечение user_id и role из claims и сохранение их в контексте Gin
+		if uid, ok := claims["user_id"]; ok {
+			c.Set("user_id", uint(uid.(float64)))
+		}
+
+		if role, ok := claims["role"]; ok {
+			c.Set("role", role.(string))
 		}
 
 		c.Next()

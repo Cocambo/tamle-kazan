@@ -39,6 +39,7 @@ func NewProxy(target string, stripPrefix string) gin.HandlerFunc {
 			req.URL.Path = path.Clean("/" + req.URL.Path)
 		}
 		req.Header.Set("X-Forwarded-Host", req.Host)
+
 	}
 
 	return func(c *gin.Context) {

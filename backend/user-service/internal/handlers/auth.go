@@ -1,12 +1,15 @@
 package handlers
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 	"time"
 
 	"github.com/Cocambo/tamle-kazan/backend/user-service/internal/config"
 	"github.com/Cocambo/tamle-kazan/backend/user-service/internal/database"
 	"github.com/Cocambo/tamle-kazan/backend/user-service/internal/models"
+	"github.com/Cocambo/tamle-kazan/backend/user-service/internal/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -14,7 +17,11 @@ import (
 )
 
 // Используем jwtSecret для подписи токенов
-var jwtSecret = []byte(config.AppConfig.JwtSecret)
+// var jwtSecret = []byte(config.AppConfig.JwtSecret)
+
+func getJWTSecret() []byte {
+	return []byte(config.AppConfig.JwtSecret)
+}
 
 // Register — создание нового пользователя
 //
@@ -46,6 +53,7 @@ func Register(c *gin.Context) { // Используем Gin
 		return
 	}
 
+	// Создаем пользователя в базе
 	user := models.User{
 		FirstName: input.FirstName,
 		LastName:  input.LastName,
@@ -54,19 +62,45 @@ func Register(c *gin.Context) { // Используем Gin
 		Role:      "user",
 	}
 
-	// Создаем пользователя
+	// Сохраняем пользователя
 	if err := database.DB.Create(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "user registered successfully"})
+	// Генерируем токен подтверждения и отправляем письмо
+	ttl := 20 // время жизни токена в минутах
+	token, expiresAt, err := utils.GenerateToken(ttl)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate confirmation token"})
+		return
+	}
+
+	// Сохраняем хэш токена и время истечения в базе
+	user.EmailTokenHash = utils.HashToken(token)
+	user.TokenExpiresAt = expiresAt
+	user.LastConfirmSentAt = time.Now()
+	if err := database.DB.Save(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save confirmation token"})
+		return
+	}
+
+	// Отправляем письмо (асинхронно в goroutine — чтобы не блокировать запрос)
+	go func(emailAddr, token string) {
+		if err := utils.SendConfirmationEmail(emailAddr, token); err != nil {
+			log.Printf("failed to send confirmation email to %s: %v", emailAddr, err)
+		}
+	}(user.Email, token)
+
+	c.JSON(http.StatusCreated, gin.H{"message": "user registered successfully; confirmation email sent"})
+
 }
 
 // Login — проверка email/пароля и выдача JWT
 //
 // POST /login
 func Login(c *gin.Context) {
+	fmt.Println("User service JWT secret:", config.AppConfig.JwtSecret)
 	var input struct { // принимаем тело запроса, Gin автоматически проверит обязательность полей и формат email.
 		Email    string `json:"email" binding:"required,email"`
 		Password string `json:"password" binding:"required"`
@@ -97,7 +131,7 @@ func Login(c *gin.Context) {
 	})
 
 	// Подписываем JWT токен
-	tokenString, err := token.SignedString(jwtSecret)
+	tokenString, err := token.SignedString(getJWTSecret())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})
 		return

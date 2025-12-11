@@ -21,7 +21,7 @@ func LoadConfig() (*Config, error) {
 
 	cfg := &Config{
 		ServerPort:      getEnv("SERVER_PORT", "8080"),
-		JwtSecret:       getEnv("JWT_SECRET", "d8f3b4e7a01c2f8f64ad3e7b9c61d39a5f27cf8f9272b9a18c3a77d4a2b3e9cf"),
+		JwtSecret:       getEnv("JWT_SECRET", ""),
 		UserServiceURL:  getEnv("USER_SERVICE_URL", "http://localhost:8081"),
 		OrderServiceURL: getEnv("ORDER_SERVICE_URL", "http://localhost:8082"),
 	}
