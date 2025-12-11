@@ -18,7 +18,7 @@
       <v-btn
         variant="outlined"
         color="white"
-        class="register-btn text-none"
+        class="btn"
         rounded="0"
         to="/login"
       >
@@ -56,10 +56,7 @@
   opacity: 0.7;
 }
 
-.register-btn {
-  border: 1px solid white;
-  font-size: 18px;
-  text-transform: none;
-  letter-spacing: 0;
+.btn {
+  font-family: "Cormorant Garamond", serif;
 }
 </style>

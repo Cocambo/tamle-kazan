@@ -22,7 +22,9 @@
     </v-container>
 
     <div class="button-container">
-      <v-btn color="primary" class="all-btn" rounded="0"> Все рестораны </v-btn>
+      <v-btn color="primary" class="all-btn" rounded="0" to="/restaurants">
+        Все рестораны
+      </v-btn>
     </div>
 
     <img src="@/assets/branch.png" alt="decor branch" class="decor-branch" />

@@ -13,10 +13,12 @@
     </div>
   </section>
   <TopRestaurantsComponent />
+  <RecomendationBlockComponent />
 </template>
 
 <script setup>
 import TopRestaurantsComponent from "@components/TopRestaurantsComponent.vue";
+import RecomendationBlockComponent from "@components/RecomendationBlockComponent.vue";
 </script>
 
 <style>
