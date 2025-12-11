@@ -21,6 +21,7 @@ func GetUser(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+// TODO: пересмотреть и протестировать логику обновления пользователя
 // UpdateUser — обновляет данные пользователя (имя, фамилия, email)
 func UpdateUser(c *gin.Context) {
 	id := c.Param("id")
@@ -52,6 +53,7 @@ func UpdateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+// TODO: пересмотреть и протестировать логику смены роли
 // ChangeRole позволяет изменить роль пользователя.
 // Только админ может изменять роль пользователя.
 func ChangeRole(c *gin.Context) {

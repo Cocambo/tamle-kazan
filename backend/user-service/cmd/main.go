@@ -6,7 +6,6 @@ import (
 	"github.com/Cocambo/tamle-kazan/backend/user-service/internal/config"
 	"github.com/Cocambo/tamle-kazan/backend/user-service/internal/database"
 	"github.com/Cocambo/tamle-kazan/backend/user-service/internal/handlers"
-	"github.com/Cocambo/tamle-kazan/backend/user-service/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,21 +26,35 @@ func main() {
 	r.POST("/register", handlers.Register)
 	r.POST("/login", handlers.Login)
 
-	// Приватные маршруты — требуют JWT-токен
-	auth := r.Group("/")
-	auth.Use(middleware.AuthMiddleware())
-	{
-		auth.GET("/users/:id", handlers.GetUser)
-		auth.PUT("/users/:id", handlers.UpdateUser)
+	r.GET("/confirm-email", handlers.ConfirmEmail)
+	r.POST("/resend-confirmation", handlers.ResendConfirmation)
 
-		// Только для администраторов
-		auth.PUT("/users/:id/role", middleware.AdminMiddleware(), handlers.ChangeRole)
+	// Приватные маршруты — требуют JWT-токен
+	// auth := r.Group("/")
+	// auth.GET("/users/:id", handlers.GetUser)
+	// auth.PUT("/users/:id", handlers.UpdateUser)
+
+	userRoutes := r.Group("/users")
+	{
+		userRoutes.GET("/:id", handlers.GetUser)
+		userRoutes.PUT("/:id", handlers.UpdateUser)
 	}
+
+	// Только для администраторов
+	//auth.PUT("/users/:id/role", middleware.AdminMiddleware(), handlers.ChangeRole)
+	// auth.Use(middleware.AuthMiddleware())
+	// {
+	// 	auth.GET("/users/:id", handlers.GetUser)
+	// 	auth.PUT("/users/:id", handlers.UpdateUser)
+
+	// 	// Только для администраторов
+	// 	auth.PUT("/users/:id/role", middleware.AdminMiddleware(), handlers.ChangeRole)
+	// }
 
 	// Запуск HTTP-сервера
 	port := config.AppConfig.ServerPort
 	if port == "" {
-		port = "8080"
+		port = "8081"
 	}
 
 	log.Printf("Server start on port %s", port)

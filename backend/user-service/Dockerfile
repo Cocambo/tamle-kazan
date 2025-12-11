@@ -22,7 +22,7 @@ WORKDIR /app
 COPY --from=builder /app/user-service .
 COPY --from=builder /app/.env .
 
-EXPOSE 8080
+EXPOSE 8081
 
 # Команда по умолчанию
 CMD ["./user-service"]

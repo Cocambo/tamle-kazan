@@ -22,7 +22,7 @@ WORKDIR /app
 COPY --from=builder /app/api-gateway-service .
 COPY --from=builder /app/.env .
 
-EXPOSE 8081
+EXPOSE 8080
 
 # Команда по умолчанию
 CMD ["./api-gateway-service"]

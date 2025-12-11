@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// TODO: протестировать middleware для админа
 // AdminMiddleware разрешает доступ только пользователям с ролью admin
 func AdminMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
