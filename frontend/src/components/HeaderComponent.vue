@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar flat absolute>
+  <v-app-bar :color="color" flat absolute>
     <v-container
       class="d-flex align-center justify-space-between header pr-10 pl-10"
       fluid
@@ -18,7 +18,7 @@
       <v-btn
         variant="outlined"
         color="white"
-        class="btn"
+        class="headerbtn"
         rounded="0"
         to="/login"
       >
@@ -28,12 +28,19 @@
   </v-app-bar>
 </template>
 
-<style>
-.header {
-  background-color: rgb(var(--v-theme-primary));
-}
+<script setup>
+import { defineProps } from "vue";
+defineProps({
+  color: {
+    type: String,
+    default: "rgb(var(--v-theme-primary))",
+  },
+});
+</script>
 
+<style>
 .logo-text {
+  width: 214px;
   font-size: 28px;
   font-weight: 600;
   font-family: "Cormorant Garamond", serif;
@@ -56,7 +63,8 @@
   opacity: 0.7;
 }
 
-.btn {
+.headerbtn {
+  margin: 0px;
   font-family: "Cormorant Garamond", serif;
 }
 </style>

@@ -1,5 +1,12 @@
 <template>
-  <div class="restaurant-card" :style="{ backgroundImage: `url(${image})` }">
+  <div
+    class="restaurant-card"
+    :style="{
+      backgroundImage: `url(${image})`,
+      width: `${props.width}px`,
+      height: `${props.height}px`,
+    }"
+  >
     <div class="overlay"></div>
 
     <div class="card-content pa-4">
@@ -38,6 +45,8 @@ const props = defineProps({
   name: String,
   image: String,
   id: [Number, String],
+  width: { type: [Number, String], default: 300 },
+  height: { type: [Number, String], default: 400 },
 });
 
 const isFavorite = ref(false);
@@ -49,15 +58,12 @@ function toggleFavorite() {
 
 function goToRestaurant() {
   console.log(`Переход к ресторану: ${props.name}`);
-  // router.push(`/restaurant/${props.id}`);
 }
 </script>
 
 <style>
 .restaurant-card {
   position: relative;
-  height: 400px;
-  width: 300px;
   background-size: cover;
   background-position: center;
   border-radius: 0;

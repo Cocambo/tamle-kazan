@@ -5,21 +5,7 @@
       <p class="section-subtitle">Выбор наших клиентов</p>
     </div>
 
-    <v-container
-      class="cards-container d-flex align-center justify-space-between flex-wrap"
-    >
-      <div
-        v-for="(restaurant, index) in restaurants"
-        :key="index"
-        class="card-wrapper"
-      >
-        <RestaurantCard
-          :name="restaurant.name"
-          :image="restaurant.image"
-          :id="restaurant.id"
-        />
-      </div>
-    </v-container>
+    <ThreeRestaurantsComponent />
 
     <div class="button-container">
       <v-btn color="primary" class="all-btn" rounded="0" to="/restaurants">
@@ -32,16 +18,7 @@
 </template>
 
 <script setup>
-import RestaurantCard from "@/components/RestaurantCard.vue";
-import olioImg from "@/assets/olio.jpg";
-import diaImg from "@/assets/dia2.jpg";
-import terraImg from "@/assets/terra.jpg";
-
-const restaurants = [
-  { id: 1, name: "Olio", image: olioImg },
-  { id: 2, name: "Dia", image: diaImg },
-  { id: 3, name: "Terra et Silva", image: terraImg },
-];
+import ThreeRestaurantsComponent from "@/components/ThreeRestaurantsComponent.vue";
 </script>
 
 <style>

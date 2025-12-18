@@ -1,6 +1,6 @@
 <template>
-  <v-container class="register d-flex align-center justify-center fill-height">
-    <v-card class="register-card pa-8" elevation="3" rounded="0">
+  <v-container class="register justify-center fill-height">
+    <VCard class="register-card pa-8" elevation="3" rounded="0">
       <h1 class="text-center register-title mb-6">Регистрация</h1>
 
       <v-form @submit.prevent="register">
@@ -84,7 +84,7 @@
           </v-btn>
         </div>
       </v-form>
-    </v-card>
+    </VCard>
 
     <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="3000">
       {{ snackbarText }}
@@ -144,18 +144,9 @@ const register = () => {
 };
 </script>
 
-<style>
-.register {
-  background-image: url("@/assets/branch.png");
-  background-repeat: no-repeat;
-  background-position: left bottom;
-  background-size: auto;
-  min-height: 100vh;
-  background-color: #ffffff;
-}
-
+<style scoped>
 .register-card {
-  border: 1px solid rgb(var(--v-theme-primary));
+  border: 2px solid rgb(var(--v-theme-primary));
   max-width: 700px;
 }
 

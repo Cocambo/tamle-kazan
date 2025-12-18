@@ -3,6 +3,7 @@
     class="hero-section d-flex flex-column justify-center align-start text-start"
   >
     <div class="overlay"></div>
+    <HeaderComponent color="transparent" />
 
     <div class="hero-content align-start">
       <h1 class="hero-title">
@@ -17,6 +18,7 @@
 </template>
 
 <script setup>
+import HeaderComponent from "@components/HeaderComponent.vue";
 import TopRestaurantsComponent from "@components/TopRestaurantsComponent.vue";
 import RecomendationBlockComponent from "@components/RecomendationBlockComponent.vue";
 </script>

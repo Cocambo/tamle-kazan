@@ -35,8 +35,8 @@
         </v-text-field>
 
         <div class="d-flex justify-end mb-4">
-          <RouterLink to="/reset-password" class="text-link"
-            >Забыли пароль?</RouterLink
+          <RouterLink to="/login" class="text-link"
+            >Нет аккаунта? Зарегистрироваться</RouterLink
           >
         </div>
 
@@ -88,17 +88,8 @@ const register = () => {
 </script>
 
 <style scoped>
-.register {
-  background-image: url("@/assets/branch.png");
-  background-repeat: no-repeat;
-  background-position: left bottom;
-  background-size: auto;
-  min-height: 100vh;
-  background-color: #ffffff;
-}
-
 .register-card {
-  border: 1px solid rgb(var(--v-theme-primary));
+  border: 2px solid rgb(var(--v-theme-primary));
   max-width: 700px;
 }
 
