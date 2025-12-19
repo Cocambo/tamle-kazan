@@ -17,6 +17,10 @@ func SetupRouter(cfg *config.Config) *gin.Engine {
 	{
 		publicUser.POST("/register", userProxy)
 		publicUser.POST("/login", userProxy)
+
+		publicUser.POST("/refresh", userProxy)
+		publicUser.POST("/logout", userProxy)
+
 		publicUser.GET("/confirm-email", userProxy)
 		publicUser.POST("/resend-confirmation", userProxy)
 	}

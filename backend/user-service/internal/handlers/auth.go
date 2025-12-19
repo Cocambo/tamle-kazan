@@ -123,21 +123,120 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// Создаём JWT токен
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+	// Создаём JWT access токен (короткоживущий)
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id": user.ID,
 		"role":    user.Role,
-		"exp":     time.Now().Add(24 * time.Hour).Unix(),
+		"exp":     time.Now().Add(15 * time.Minute).Unix(),
 	})
 
-	// Подписываем JWT токен
-	tokenString, err := token.SignedString(getJWTSecret())
+	// Подписываем JWT access токен
+	accessTokenString, err := accessToken.SignedString(getJWTSecret())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate access token"})
+		return
+	}
+
+	// Генерируем refresh токен (долгоживущий, 7 дней)
+	refreshToken, refreshExpiresAt, err := utils.GenerateToken(7 * 24 * 60) // 7 дней в минутах
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate refresh token"})
+		return
+	}
+
+	// Сохраняем хэш refresh токена в базе
+	user.RefreshTokenHash = utils.HashToken(refreshToken)
+	user.RefreshExpiresAt = refreshExpiresAt
+	if err := database.DB.Save(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save refresh token"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"token": tokenString,
+		"access_token":  accessTokenString,
+		"refresh_token": refreshToken,
 	})
+}
+
+// Refresh — обновление access токена по refresh токену
+//
+// POST /refresh
+func Refresh(c *gin.Context) {
+	var input struct {
+		RefreshToken string `json:"refresh_token" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Хэшируем refresh токен для поиска в базе
+	refreshTokenHash := utils.HashToken(input.RefreshToken)
+
+	// Ищем пользователя с таким refresh токеном
+	var user models.User
+	if err := database.DB.Where("refresh_token_hash = ?", refreshTokenHash).First(&user).Error; err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid refresh token"})
+		return
+	}
+
+	// Проверяем, не истёк ли refresh токен
+	if time.Now().After(user.RefreshExpiresAt) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "refresh token expired"})
+		return
+	}
+
+	// Создаём новый JWT access токен
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id": user.ID,
+		"role":    user.Role,
+		"exp":     time.Now().Add(15 * time.Minute).Unix(),
+	})
+
+	// Подписываем новый access токен
+	accessTokenString, err := accessToken.SignedString(getJWTSecret())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate access token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"access_token": accessTokenString,
+	})
+}
+
+// Logout — инвалидация refresh токена
+//
+// POST /logout
+func Logout(c *gin.Context) {
+	var input struct {
+		RefreshToken string `json:"refresh_token" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Хэшируем refresh токен для поиска в базе
+	refreshTokenHash := utils.HashToken(input.RefreshToken)
+
+	// Ищем пользователя с таким refresh токеном
+	var user models.User
+	if err := database.DB.Where("refresh_token_hash = ?", refreshTokenHash).First(&user).Error; err != nil {
+		// Если токен не найден, всё равно возвращаем успех (для безопасности)
+		c.JSON(http.StatusOK, gin.H{"message": "logged out successfully"})
+		return
+	}
+
+	// Очищаем refresh токен в базе
+	user.RefreshTokenHash = ""
+	user.RefreshExpiresAt = time.Time{}
+	if err := database.DB.Save(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to logout"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "logged out successfully"})
 }
