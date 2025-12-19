@@ -22,7 +22,12 @@
       </div>
       <div class="profile-restaurants pa-8 justify-center">
         <h1 class="text-center">Топ ваших ресторанов</h1>
-        <ThreeRestaurantsComponent :cardWidth="200" :cardHeight="250" />
+        <ThreeRestaurantsComponent :cardWidth="230" :cardHeight="300" />
+      </div>
+      <div class="profile-logout d-flex justify-center align-center">
+        <VBtn class="profile-logout__btn" rounded="0" color="primary"
+          >Выйти</VBtn
+        >
       </div>
     </VCard>
   </VContainer>
@@ -82,5 +87,14 @@ import ThreeRestaurantsComponent from "@/components/ThreeRestaurantsComponent.vu
   padding: 6px 12px;
   border: none;
   border-radius: 0;
+}
+
+.profile-logout {
+  height: 70px;
+  background-color: #ebf0e4;
+}
+
+.profile-logout__btn {
+  font-family: "Cormorant Garamond", serif;
 }
 </style>

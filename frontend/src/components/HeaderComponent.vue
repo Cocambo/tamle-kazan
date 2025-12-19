@@ -29,8 +29,7 @@
 </template>
 
 <script setup>
-import { defineProps } from "vue";
-defineProps({
+const props = defineProps({
   color: {
     type: String,
     default: "rgb(var(--v-theme-primary))",
