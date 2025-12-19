@@ -26,30 +26,17 @@ func main() {
 	r.POST("/register", handlers.Register)
 	r.POST("/login", handlers.Login)
 
+	r.POST("/refresh", handlers.Refresh)
+	r.POST("/logout", handlers.Logout)
+
 	r.GET("/confirm-email", handlers.ConfirmEmail)
 	r.POST("/resend-confirmation", handlers.ResendConfirmation)
-
-	// Приватные маршруты — требуют JWT-токен
-	// auth := r.Group("/")
-	// auth.GET("/users/:id", handlers.GetUser)
-	// auth.PUT("/users/:id", handlers.UpdateUser)
 
 	userRoutes := r.Group("/users")
 	{
 		userRoutes.GET("/:id", handlers.GetUser)
 		userRoutes.PUT("/:id", handlers.UpdateUser)
 	}
-
-	// Только для администраторов
-	//auth.PUT("/users/:id/role", middleware.AdminMiddleware(), handlers.ChangeRole)
-	// auth.Use(middleware.AuthMiddleware())
-	// {
-	// 	auth.GET("/users/:id", handlers.GetUser)
-	// 	auth.PUT("/users/:id", handlers.UpdateUser)
-
-	// 	// Только для администраторов
-	// 	auth.PUT("/users/:id/role", middleware.AdminMiddleware(), handlers.ChangeRole)
-	// }
 
 	// Запуск HTTP-сервера
 	port := config.AppConfig.ServerPort
