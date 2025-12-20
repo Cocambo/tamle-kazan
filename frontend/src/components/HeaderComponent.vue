@@ -16,6 +16,7 @@
       </div>
 
       <v-btn
+        v-if="!authStore.isAuthenticated"
         variant="outlined"
         color="white"
         class="headerbtn"
@@ -24,11 +25,19 @@
       >
         Зарегистрироваться
       </v-btn>
+
+      <v-btn v-else icon to="/profile">
+        <v-icon>mdi-account</v-icon>
+      </v-btn>
     </v-container>
   </v-app-bar>
 </template>
 
 <script setup>
+import { useAuthStore } from "@/stores/authStore";
+
+const authStore = useAuthStore();
+
 const props = defineProps({
   color: {
     type: String,

@@ -6,7 +6,7 @@
       >
         <div class="profile-photo"></div>
         <div class="profile-name">
-          <h1 class="profile-name__name">Мазитова Алина Рамилевна</h1>
+          <h1 class="profile-name__name">Мазитова Алина</h1>
           <p class="profile-name__status">Ценитель прекрасного</p>
           <div class="profile-email d-flex align-center">
             <p class="profile-email__email">mazitova1402@gmail.com</p>

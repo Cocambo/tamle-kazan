@@ -55,7 +55,12 @@
 </template>
 
 <script setup>
+import { useAuthStore } from "@/stores/authStore";
+import { useRouter } from "vue-router";
 import { ref } from "vue";
+
+const authStore = useAuthStore();
+const router = useRouter();
 
 const email = ref("");
 const password = ref("");
@@ -74,7 +79,7 @@ const showToast = (message, color = "warning") => {
   snackbar.value = true;
 };
 
-const register = () => {
+const register = async () => {
   if (!email.value || !password.value) {
     showToast("Заполните все поля", "warning");
     return;
@@ -83,6 +88,17 @@ const register = () => {
   if (!emailRegex.test(email.value)) {
     showToast("Укажите корректную почту", "warning");
     return;
+  }
+
+  try {
+    await authStore.login({
+      email: email.value,
+      password: password.value,
+    });
+
+    router.push("/profile");
+  } catch {
+    showToast("Неверный логин или пароль", "error");
   }
 };
 </script>

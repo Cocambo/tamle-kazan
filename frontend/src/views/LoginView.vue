@@ -93,7 +93,12 @@
 </template>
 
 <script setup>
+import { useAuthStore } from "@/stores/authStore";
+import { useRouter } from "vue-router";
 import { ref } from "vue";
+
+const authStore = useAuthStore();
+const router = useRouter();
 
 const firstName = ref("");
 const lastName = ref("");
@@ -116,7 +121,7 @@ const showToast = (message, color = "warning") => {
   snackbar.value = true;
 };
 
-const register = () => {
+const register = async () => {
   if (
     !firstName.value ||
     !lastName.value ||
@@ -138,9 +143,22 @@ const register = () => {
     return;
   }
 
-  showToast("Регистрация прошла успешно!", "success");
+  try {
+    await authStore.register({
+      first_name: firstName.value,
+      last_name: lastName.value,
+      email: email.value,
+      password: password.value,
+    });
 
-  console.log("Регистрация:", { firstName, lastName, email, password });
+    showToast("Регистрация успешна! Проверьте почту", "success");
+
+    setTimeout(() => {
+      router.push("/auth");
+    }, 1500);
+  } catch (e) {
+    showToast(e.response?.data?.error || "Ошибка регистрации", "error");
+  }
 };
 </script>
 

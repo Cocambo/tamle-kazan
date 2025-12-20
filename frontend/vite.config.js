@@ -32,11 +32,11 @@ export default defineConfig({
     },
 
     server: {
-        host: true,          // позволяет подключаться извне (через localhost)
-        port: 5173,          // явно указываем порт
+        host: true,
+        port: 5173,
         watch: {
-            usePolling: true,  // нужно для Docker + Windows/WSL, чтобы hot reload работал
-            interval: 100,     // (опционально) уменьшает задержку реакции на изменения
+            usePolling: true,
+            interval: 100,
         },
     },
 })
