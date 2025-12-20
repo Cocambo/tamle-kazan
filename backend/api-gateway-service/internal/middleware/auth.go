@@ -56,7 +56,10 @@ func JWTMiddleware(jwtSecret string) gin.HandlerFunc {
 
 		// Извлечение user_id и role из claims и сохранение их в контексте Gin
 		if uid, ok := claims["user_id"]; ok {
-			c.Set("user_id", uint(uid.(float64)))
+			userID := uint(uid.(float64))
+			c.Set("user_id", userID)
+
+			c.Request.Header.Set("X-User-ID", fmt.Sprint(userID))
 		}
 
 		if role, ok := claims["role"]; ok {

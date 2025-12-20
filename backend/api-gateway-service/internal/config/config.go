@@ -8,10 +8,10 @@ import (
 )
 
 type Config struct {
-	ServerPort      string
-	JwtSecret       string
-	UserServiceURL  string
-	OrderServiceURL string
+	ServerPort           string
+	JwtSecret            string
+	UserServiceURL       string
+	RestaurantServiceURL string
 }
 
 func LoadConfig() (*Config, error) {
@@ -20,10 +20,10 @@ func LoadConfig() (*Config, error) {
 	}
 
 	cfg := &Config{
-		ServerPort:      getEnv("SERVER_PORT", "8080"),
-		JwtSecret:       getEnv("JWT_SECRET", ""),
-		UserServiceURL:  getEnv("USER_SERVICE_URL", "http://localhost:8081"),
-		OrderServiceURL: getEnv("ORDER_SERVICE_URL", "http://localhost:8082"),
+		ServerPort:           getEnv("SERVER_PORT", "8080"),
+		JwtSecret:            getEnv("JWT_SECRET", ""),
+		UserServiceURL:       getEnv("USER_SERVICE_URL", "http://localhost:8081"),
+		RestaurantServiceURL: getEnv("RESTAURANT_SERVICE_URL", "http://localhost:8082"),
 	}
 
 	return cfg, nil
