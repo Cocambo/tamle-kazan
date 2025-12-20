@@ -15,6 +15,8 @@ type User struct {
 	EmailTokenHash    string    `gorm:"size:64" json:"email_token_hash"`
 	TokenExpiresAt    time.Time `json:"token_expires_at"`
 	LastConfirmSentAt time.Time `json:"last_confirm_sent_at"`
+	RefreshTokenHash  string    `gorm:"size:64" json:"-"`
+	RefreshExpiresAt  time.Time `json:"-"`
 	// В случае если не нужно хранить эти поля в JSON ответах, можно раскомментировать следующие строки:
 	// EmailTokenHash    string    `gorm:"size:64" json:"-"`
 	// TokenExpiresAt    time.Time `json:"-"`
