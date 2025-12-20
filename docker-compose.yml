@@ -64,6 +64,8 @@ services:
       - ./backend/restaurant-service/.env
     ports:
       - "8082:8082"
+    volumes:
+      - ./backend/restaurant-service/photos:/app/photos
     networks:
       - tamle-net
 

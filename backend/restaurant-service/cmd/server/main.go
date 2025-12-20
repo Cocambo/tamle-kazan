@@ -44,7 +44,7 @@ func main() {
 	h := handlers.NewHandlers(svc)
 
 	// Настройка роутера
-	r := router.SetupRouter(h)
+	r := router.SetupRouter(h, cfg.PhotosDir)
 
 	// Запуск сервера
 	port := fmt.Sprintf(":%d", cfg.GetServerPortInt())

@@ -3,20 +3,23 @@ package seed
 import (
 	"context"
 	"fmt"
-	"log"
+	"os"
+	"path/filepath"
 	"restaurant-service/internal/models"
+	"sort"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
 )
 
-// LoadSeedData загружает начальные данные в БД
 func LoadSeedData(ctx context.Context, db *gorm.DB, photosDir string) error {
-	// Проверяем, есть ли уже данные
 	var count int64
-	db.WithContext(ctx).Model(&models.Restaurant{}).Count(&count)
+	if err := db.WithContext(ctx).Model(&models.Restaurant{}).Count(&count).Error; err != nil {
+		return err
+	}
 	if count > 0 {
-		return nil // Данные уже загружены
+		return nil
 	}
 
 	restaurants := []models.Restaurant{
@@ -25,124 +28,91 @@ func LoadSeedData(ctx context.Context, db *gorm.DB, photosDir string) error {
 			Description: "Татарская кухня в атмосфере традиционного татарского села",
 			Address:     "ул. Тукая, 120",
 			Cuisine:     "Татарская",
-			AverageBill: 1500.0,
-			Rating:      0.0,
-			ReviewsCount: 0,
+			AverageBill: 1500,
 		},
 		{
 			Name:        "Дом Татарской Кулинарии",
 			Description: "Аутентичная татарская кухня в центре Казани",
 			Address:     "ул. Баумана, 58",
 			Cuisine:     "Татарская",
-			AverageBill: 1200.0,
-			Rating:      0.0,
-			ReviewsCount: 0,
+			AverageBill: 1200,
 		},
 		{
 			Name:        "Чайхана",
 			Description: "Узбекская и татарская кухня, большие порции",
 			Address:     "ул. Баумана, 77",
 			Cuisine:     "Среднеазиатская",
-			AverageBill: 1000.0,
-			Rating:      0.0,
-			ReviewsCount: 0,
+			AverageBill: 1000,
 		},
 		{
 			Name:        "Казанская кухня",
 			Description: "Современная интерпретация татарских блюд",
 			Address:     "ул. Профсоюзная, 29",
 			Cuisine:     "Татарская",
-			AverageBill: 1800.0,
-			Rating:      0.0,
-			ReviewsCount: 0,
+			AverageBill: 1800,
 		},
 		{
 			Name:        "Паста & Пинца",
 			Description: "Итальянская кухня в центре Казани",
 			Address:     "ул. Баумана, 58/8",
 			Cuisine:     "Итальянская",
-			AverageBill: 1400.0,
-			Rating:      0.0,
-			ReviewsCount: 0,
-		},
-		{
-			Name:        "Суши Мастер",
-			Description: "Японская кухня, роллы и суши",
-			Address:     "ул. Пушкина, 12",
-			Cuisine:     "Японская",
-			AverageBill: 1600.0,
-			Rating:      0.0,
-			ReviewsCount: 0,
-		},
-		{
-			Name:        "Бургер Кинг",
-			Description: "Американская кухня, бургеры и картофель фри",
-			Address:     "пр. Победы, 100",
-			Cuisine:     "Американская",
-			AverageBill: 800.0,
-			Rating:      0.0,
-			ReviewsCount: 0,
-		},
-		{
-			Name:        "Вкусно и Точка",
-			Description: "Русская кухня, домашние блюда",
-			Address:     "ул. Кремлевская, 35",
-			Cuisine:     "Русская",
-			AverageBill: 900.0,
-			Rating:      0.0,
-			ReviewsCount: 0,
-		},
-		{
-			Name:        "Кофеин",
-			Description: "Европейская кухня, кофейня-ресторан",
-			Address:     "ул. Баумана, 75",
-			Cuisine:     "Европейская",
-			AverageBill: 1100.0,
-			Rating:      0.0,
-			ReviewsCount: 0,
-		},
-		{
-			Name:        "Грузинская кухня",
-			Description: "Аутентичная грузинская кухня, хачапури и хинкали",
-			Address:     "ул. Московская, 21",
-			Cuisine:     "Грузинская",
-			AverageBill: 1300.0,
-			Rating:      0.0,
-			ReviewsCount: 0,
+			AverageBill: 1400,
 		},
 	}
 
-	// Создаем рестораны
 	for i := range restaurants {
-		if err := db.WithContext(ctx).Create(&restaurants[i]).Error; err != nil {
-			return fmt.Errorf("failed to create restaurant %s: %w", restaurants[i].Name, err)
+		restaurant := &restaurants[i]
+
+		if err := db.WithContext(ctx).Create(restaurant).Error; err != nil {
+			return fmt.Errorf("failed to create restaurant %s: %w", restaurant.Name, err)
 		}
 
-		// Создаем заглушку для главного фото (в реальности здесь был бы файл)
-		photoURL := fmt.Sprintf("/photos/restaurant_%d_main.jpg", restaurants[i].ID)
-		photo := models.Photo{
-			RestaurantID: restaurants[i].ID,
-			URL:          photoURL,
-			IsMain:       true,
-			CreatedAt:    time.Now(),
-		}
-		if err := db.WithContext(ctx).Create(&photo).Error; err != nil {
-			log.Printf("Warning: failed to create photo for restaurant %d: %v", restaurants[i].ID, err)
+		restaurantIndex := i + 1
+		prefix := fmt.Sprintf("restaurant_%d_", restaurantIndex)
+
+		entries, err := os.ReadDir(photosDir)
+		if err != nil {
+			return fmt.Errorf("failed to read photos dir: %w", err)
 		}
 
-		// Создаем еще одно дополнительное фото
-		photo2URL := fmt.Sprintf("/photos/restaurant_%d_2.jpg", restaurants[i].ID)
-		photo2 := models.Photo{
-			RestaurantID: restaurants[i].ID,
-			URL:          photo2URL,
-			IsMain:       false,
-			CreatedAt:    time.Now(),
+		var photoFiles []string
+		for _, entry := range entries {
+			if entry.IsDir() {
+				continue
+			}
+
+			name := entry.Name()
+			if strings.HasPrefix(name, prefix) &&
+				(strings.HasSuffix(name, ".jpg") || strings.HasSuffix(name, ".jpeg") || strings.HasSuffix(name, ".png")) {
+				photoFiles = append(photoFiles, name)
+			}
 		}
-		if err := db.WithContext(ctx).Create(&photo2).Error; err != nil {
-			log.Printf("Warning: failed to create photo for restaurant %d: %v", restaurants[i].ID, err)
+
+		if len(photoFiles) == 0 {
+			return fmt.Errorf("no photos found for restaurant %d (%s)", restaurantIndex, restaurant.Name)
+		}
+
+		// стабильный порядок
+		sort.Strings(photoFiles)
+
+		for idx, fileName := range photoFiles {
+			filePath := filepath.Join(photosDir, fileName)
+			if _, err := os.Stat(filePath); err != nil {
+				return fmt.Errorf("photo file not found: %s", filePath)
+			}
+
+			photo := models.Photo{
+				RestaurantID: restaurant.ID,
+				URL:          "/photos/" + fileName,
+				IsMain:       idx == 0,
+				CreatedAt:    time.Now(),
+			}
+
+			if err := db.WithContext(ctx).Create(&photo).Error; err != nil {
+				return fmt.Errorf("failed to create photo %s: %w", fileName, err)
+			}
 		}
 	}
 
 	return nil
 }
-
