@@ -17,6 +17,7 @@ func (r *Repository) CreateReview(ctx context.Context, review *models.Review) er
 func (r *Repository) GetReviewsByRestaurantID(ctx context.Context, restaurantID uint) ([]models.Review, error) {
 	var reviews []models.Review
 	err := r.db.WithContext(ctx).
+		Preload("Restaurant").
 		Where("restaurant_id = ?", restaurantID).
 		Order("created_at DESC").
 		Find(&reviews).Error

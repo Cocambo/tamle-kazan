@@ -24,10 +24,10 @@ func Load() *Config {
 	}
 
 	return &Config{
-		DBHost:     getEnv("DB_HOST", "localhost"),
+		DBHost:     getEnv("DB_HOST", "db-restaurant"),
 		DBPort:     getEnv("DB_PORT", "5432"),
 		DBUser:     getEnv("DB_USER", "postgres"),
-		DBPassword: getEnv("DB_PASSWORD", "postgres"),
+		DBPassword: getEnv("DB_PASSWORD", "tkpassword"),
 		DBName:     getEnv("DB_NAME", "restaurant_db"),
 		ServerPort: getEnv("SERVER_PORT", "8082"),
 		PhotosDir:  getEnv("PHOTOS_DIR", "./storage/photos"),

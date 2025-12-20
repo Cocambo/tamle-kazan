@@ -10,8 +10,8 @@ import (
 	"restaurant-service/internal/handlers"
 	"restaurant-service/internal/repository"
 	"restaurant-service/internal/router"
+	"restaurant-service/internal/seed"
 	"restaurant-service/internal/service"
-	"restaurant-service/seed"
 )
 
 func main() {

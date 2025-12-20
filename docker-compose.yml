@@ -32,6 +32,41 @@ services:
       - "8081:8081"
     networks:
       - tamle-net
+
+  db-restaurant:
+    image: postgres:15
+    container_name: db-restaurant
+    restart: always
+    env_file:
+      - ./backend/restaurant-service/.env
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-restaurant-data:/var/lib/postgresql/data
+    networks:
+      - tamle-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres || exit 1" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  restaurant-service:
+    build:
+      context: ./backend/restaurant-service
+      dockerfile: Dockerfile
+    container_name: restaurant-service
+    depends_on:
+      db-restaurant:
+        condition: service_healthy
+    env_file:
+      - ./backend/restaurant-service/.env
+    ports:
+      - "8082:8082"
+    networks:
+      - tamle-net
+
   api-gateway:
     build:
       context: ./backend/api-gateway-service
@@ -39,6 +74,7 @@ services:
     container_name: api-gateway-service
     depends_on:
       - user-service
+      - restaurant-service
     env_file:
       - ./backend/api-gateway-service/.env
     ports:
@@ -68,3 +104,4 @@ networks:
 
 volumes:
   db-user-data:
+  db-restaurant-data:
