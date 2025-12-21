@@ -37,7 +37,7 @@ type Review struct {
 	UpdatedAt time.Time `json:"updated_at"`
 
 	// Связь с рестораном
-	Restaurant Restaurant `gorm:"foreignKey:RestaurantID" json:"restaurant,omitempty"`
+	Restaurant Restaurant `gorm:"foreignKey:RestaurantID;references:ID" json:"restaurant,omitempty"`
 }
 
 type Favorite struct {
@@ -61,5 +61,6 @@ type Photo struct {
 	CreatedAt    time.Time `json:"created_at"`
 
 	// Связь с рестораном
-	Restaurant Restaurant `gorm:"foreignKey:RestaurantID" json:"restaurant,omitempty"`
+	// Restaurant Restaurant `gorm:"foreignKey:RestaurantID" json:"restaurant,omitempty"`
+	Restaurant Restaurant `json:"-"`
 }

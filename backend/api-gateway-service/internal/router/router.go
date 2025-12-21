@@ -42,5 +42,27 @@ func SetupRouter(cfg *config.Config) *gin.Engine {
 
 	}
 
+	restaurantProxy := proxy.NewProxy(cfg.RestaurantServiceURL, "/api")
+
+	// Открытые маршруты restaurant-service
+	publicRestaurant := r.Group("/api/restaurants")
+	{
+		publicRestaurant.GET("", restaurantProxy)
+		publicRestaurant.GET("/:id", restaurantProxy)
+		publicRestaurant.GET("/:id/reviews", restaurantProxy)
+	}
+
+	authorizedRestaurant := r.Group("/api/restaurants")
+	authorizedRestaurant.Use(middleware.JWTMiddleware(cfg.JwtSecret))
+	{
+		authorizedRestaurant.GET("/favorites", restaurantProxy)
+		authorizedRestaurant.POST("/:id/reviews", restaurantProxy)
+		authorizedRestaurant.POST("/:id/favorite", restaurantProxy)
+		authorizedRestaurant.DELETE("/:id/favorite", restaurantProxy)
+	}
+
+	photosProxy := proxy.NewProxy(cfg.RestaurantServiceURL, "/api")
+	r.GET("/api/photos/*path", photosProxy)
+
 	return r
 }

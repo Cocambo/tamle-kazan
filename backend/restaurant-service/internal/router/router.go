@@ -6,8 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter(h *handlers.Handlers) *gin.Engine {
+func SetupRouter(h *handlers.Handlers, photosDir string) *gin.Engine {
 	router := gin.Default()
+
+	router.Static("/photos", photosDir)
 
 	// Public endpoints
 	public := router.Group("/restaurants")

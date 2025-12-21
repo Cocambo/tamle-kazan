@@ -9,11 +9,11 @@ import (
 )
 
 type Config struct {
-	ServerPort      string
-	JwtSecret       string
-	UserServiceURL  string
-	OrderServiceURL string
-	CORS            CORSConfig
+	ServerPort           string
+	JwtSecret            string
+	UserServiceURL       string
+	RestaurantServiceURL string
+	CORS                 CORSConfig
 }
 
 type CORSConfig struct {
@@ -31,10 +31,10 @@ func LoadConfig() (*Config, error) {
 	}
 
 	cfg := &Config{
-		ServerPort:      getEnv("SERVER_PORT", "8080"),
-		JwtSecret:       getEnv("JWT_SECRET", ""),
-		UserServiceURL:  getEnv("USER_SERVICE_URL", "http://localhost:8081"),
-		OrderServiceURL: getEnv("ORDER_SERVICE_URL", "http://localhost:8082"),
+		ServerPort:           getEnv("SERVER_PORT", "8080"),
+		JwtSecret:            getEnv("JWT_SECRET", ""),
+		UserServiceURL:       getEnv("USER_SERVICE_URL", "http://localhost:8081"),
+		RestaurantServiceURL: getEnv("ORDER_SERVICE_URL", "http://localhost:8082"),
 		CORS: CORSConfig{
 			AllowOrigins:     []string{"http://localhost:5173", "http://localhost:8081", "http://localhost:8082"},
 			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},

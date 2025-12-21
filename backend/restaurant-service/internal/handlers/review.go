@@ -90,5 +90,15 @@ func (h *Handlers) CreateReview(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, review)
+	//c.JSON(http.StatusCreated, review)
+	// Возвращаем только необходимые поля, чтобы избежать циклических ссылок
+	c.JSON(http.StatusCreated, gin.H{
+		"id":            review.ID,
+		"restaurant_id": review.RestaurantID,
+		"user_id":       review.UserID,
+		"rating":        review.Rating,
+		"comment":       review.Comment,
+		"created_at":    review.CreatedAt,
+		"updated_at":    review.UpdatedAt,
+	})
 }

@@ -10,8 +10,8 @@ import (
 	"restaurant-service/internal/handlers"
 	"restaurant-service/internal/repository"
 	"restaurant-service/internal/router"
+	"restaurant-service/internal/seed"
 	"restaurant-service/internal/service"
-	"restaurant-service/seed"
 )
 
 func main() {
@@ -44,7 +44,7 @@ func main() {
 	h := handlers.NewHandlers(svc)
 
 	// Настройка роутера
-	r := router.SetupRouter(h)
+	r := router.SetupRouter(h, cfg.PhotosDir)
 
 	// Запуск сервера
 	port := fmt.Sprintf(":%d", cfg.GetServerPortInt())
