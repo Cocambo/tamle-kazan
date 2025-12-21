@@ -40,6 +40,11 @@ export const useAuthStore = defineStore('auth', {
       this.user = data;
     },
 
+    async resendEmailConfirmation() {
+      if (!this.user?.email) return;
+      await authApi.resendConfirmation(this.user.email);
+    },
+
     async logout() {
       if (this.refreshToken) {
         await authApi.logout(this.refreshToken);
