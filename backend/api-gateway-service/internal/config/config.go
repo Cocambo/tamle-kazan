@@ -34,7 +34,7 @@ func LoadConfig() (*Config, error) {
 		ServerPort:           getEnv("SERVER_PORT", "8080"),
 		JwtSecret:            getEnv("JWT_SECRET", ""),
 		UserServiceURL:       getEnv("USER_SERVICE_URL", "http://localhost:8081"),
-		RestaurantServiceURL: getEnv("ORDER_SERVICE_URL", "http://localhost:8082"),
+		RestaurantServiceURL: getEnv("RESTAURANT_SERVICE_URL", "http://localhost:8082"),
 		CORS: CORSConfig{
 			AllowOrigins:     []string{"http://localhost:5173", "http://localhost:8081", "http://localhost:8082"},
 			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
