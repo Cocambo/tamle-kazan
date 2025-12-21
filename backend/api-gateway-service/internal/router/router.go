@@ -51,5 +51,8 @@ func SetupRouter(cfg *config.Config) *gin.Engine {
 		authorizedRestaurant.DELETE("/:id/favorite", restaurantProxy)
 	}
 
+	photosProxy := proxy.NewProxy(cfg.RestaurantServiceURL, "/api")
+	r.GET("/api/photos/*path", photosProxy)
+
 	return r
 }

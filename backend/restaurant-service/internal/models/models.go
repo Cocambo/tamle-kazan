@@ -61,5 +61,6 @@ type Photo struct {
 	CreatedAt    time.Time `json:"created_at"`
 
 	// Связь с рестораном
-	Restaurant Restaurant `gorm:"foreignKey:RestaurantID" json:"restaurant,omitempty"`
+	// Restaurant Restaurant `gorm:"foreignKey:RestaurantID" json:"restaurant,omitempty"`
+	Restaurant Restaurant `json:"-"`
 }
