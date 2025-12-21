@@ -6,17 +6,22 @@
       >
         <div class="profile-photo"></div>
         <div class="profile-name">
-          <h1 class="profile-name__name">Мазитова Алина Рамилевна</h1>
+          <h1 class="profile-name__name">
+            {{ user?.first_name }} {{ user?.last_name }}
+          </h1>
           <p class="profile-name__status">Ценитель прекрасного</p>
           <div class="profile-email d-flex align-center">
-            <p class="profile-email__email">mazitova1402@gmail.com</p>
+            <p class="profile-email__email">{{ user?.email }}</p>
             <VBtn
+              v-if="!authStore.user?.is_email_confirmed"
+              @click="resendConfirmation"
               class="profile-email__btn"
               size="sm"
               rounded="0"
               color="primary"
               >Подтвердить</VBtn
             >
+            <span v-else> Почта подтверждена </span>
           </div>
         </div>
       </div>
@@ -25,16 +30,68 @@
         <ThreeRestaurantsComponent :cardWidth="230" :cardHeight="300" />
       </div>
       <div class="profile-logout d-flex justify-center align-center">
-        <VBtn class="profile-logout__btn" rounded="0" color="primary"
+        <VBtn
+          class="profile-logout__btn"
+          rounded="0"
+          color="primary"
+          @click="logout"
           >Выйти</VBtn
         >
       </div>
     </VCard>
+    <VSnackbar v-model="snackbar" :color="snackbarColor" timeout="3000">
+      {{ snackbarText }}
+    </VSnackbar>
   </VContainer>
 </template>
 
 <script setup>
+import { computed, onMounted, ref } from "vue";
+import { VSnackbar } from "vuetify/components";
+import { useAuthStore } from "@/stores/authStore";
+import { useRouter } from "vue-router";
 import ThreeRestaurantsComponent from "@/components/ThreeRestaurantsComponent.vue";
+
+const authStore = useAuthStore();
+const router = useRouter();
+const user = computed(() => authStore.user);
+
+const snackbar = ref(false);
+const snackbarText = ref("");
+const snackbarColor = ref("");
+
+const showToast = (message, color = "warning") => {
+  snackbarText.value = message;
+  snackbarColor.value = color;
+  snackbar.value = true;
+};
+
+const logout = async () => {
+  await authStore.logout();
+  router.push("/auth");
+};
+
+const resendConfirmation = async () => {
+  try {
+    await authStore.resendEmailConfirmation();
+    showToast("Письмо подтверждения отправлено на почту", "success");
+    return;
+  } catch {
+    showToast("Ошибка отправки письма", "warning");
+    return;
+  }
+};
+
+onMounted(async () => {
+  if (!authStore.user) {
+    try {
+      await authStore.fetchProfile();
+    } catch {
+      authStore.logout();
+      router.push("/auth");
+    }
+  }
+});
 </script>
 
 <style scoped>
