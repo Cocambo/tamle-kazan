@@ -7,6 +7,7 @@ export const useRestaurantsStore = defineStore("restaurants", {
     currentRestaurant: null,
     favorites: [],
     topRestaurants: [],
+    topUserRestaurants: [],
     loading: false,
   }),
 
@@ -82,7 +83,7 @@ export const useRestaurantsStore = defineStore("restaurants", {
         this.loading = false;
       }
     },
-    
+
     async fetchTopRestaurants() {
       try {
         this.loading = true;
@@ -94,5 +95,17 @@ export const useRestaurantsStore = defineStore("restaurants", {
         this.loading = false;
       }
     },
+
+    async fetchTopUserRestaurants() {
+    try {
+      this.loading = true;
+      const { data } = await restaurantsApi.getTopUserRestaurants();
+      this.topUserRestaurants = data;
+    } catch (e) {
+      console.error("Ошибка загрузки топ-ресторанов пользователя", e);
+    } finally {
+      this.loading = false;
+    }
+  },
   },
 });

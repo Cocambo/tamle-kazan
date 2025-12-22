@@ -27,7 +27,11 @@
       </div>
       <div class="profile-restaurants pa-8 justify-center">
         <h1 class="text-center">Топ ваших ресторанов</h1>
-        <ThreeRestaurantsComponent :cardWidth="230" :cardHeight="300" />
+        <ThreeRestaurantsComponent
+          :restaurants="restaurantsStore.topUserRestaurants"
+          :cardWidth="230"
+          :cardHeight="300"
+        />
       </div>
       <div class="profile-logout d-flex justify-center align-center">
         <VBtn
@@ -46,13 +50,15 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { VSnackbar } from "vuetify/components";
 import { useAuthStore } from "@/stores/authStore";
+import { useRestaurantsStore } from "@/stores/restaurantsStore";
 import { useRouter } from "vue-router";
 import ThreeRestaurantsComponent from "@/components/ThreeRestaurantsComponent.vue";
 
 const authStore = useAuthStore();
+const restaurantsStore = useRestaurantsStore();
 const router = useRouter();
 const user = computed(() => authStore.user);
 
@@ -81,6 +87,10 @@ const resendConfirmation = async () => {
     return;
   }
 };
+
+onMounted(async () => {
+  await restaurantsStore.fetchTopUserRestaurants();
+});
 </script>
 
 <style scoped>

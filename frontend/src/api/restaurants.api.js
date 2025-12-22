@@ -20,8 +20,12 @@ export const restaurantsApi = {
   removeFromFavorites(id) {
     return http.delete(`/restaurants/${id}/favorite`);
   },
-  
+
   getTopRestaurants() {
     return http.get("/restaurants/top");
+  },
+
+  getTopUserRestaurants() {
+    return http.get("/user/profile/top");
   },
 };
