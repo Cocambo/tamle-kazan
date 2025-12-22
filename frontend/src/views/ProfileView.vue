@@ -81,17 +81,6 @@ const resendConfirmation = async () => {
     return;
   }
 };
-
-onMounted(async () => {
-  if (!authStore.user) {
-    try {
-      await authStore.fetchProfile();
-    } catch {
-      authStore.logout();
-      router.push("/auth");
-    }
-  }
-});
 </script>
 
 <style scoped>
