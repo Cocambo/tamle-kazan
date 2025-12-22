@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 import { VSnackbar } from "vuetify/components";
 import { useAuthStore } from "@/stores/authStore";
 import { useRouter } from "vue-router";

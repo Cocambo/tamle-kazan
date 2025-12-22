@@ -137,7 +137,7 @@ function updateRestaurants() {
 }
 .filters {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 2fr;
+  grid-template-columns: 1fr 1fr 1fr 2fr;
   gap: 18px;
   background: #eef4e4;
   padding: 20px;

@@ -5,7 +5,9 @@
       <p class="section-subtitle">Выбор наших клиентов</p>
     </div>
 
-    <ThreeRestaurantsComponent />
+    <VContainer>
+      <ThreeRestaurantsComponent :restaurants="topRestaurants" />
+    </VContainer>
 
     <div class="button-container">
       <v-btn color="primary" class="all-btn" rounded="0" to="/restaurants">
@@ -18,7 +20,17 @@
 </template>
 
 <script setup>
+import { onMounted, computed } from "vue";
+import { useRestaurantsStore } from "@/stores/restaurantsStore.js";
 import ThreeRestaurantsComponent from "@/components/ThreeRestaurantsComponent.vue";
+
+const restaurantsStore = useRestaurantsStore();
+
+onMounted(() => {
+  restaurantsStore.fetchTopRestaurants();
+});
+
+const topRestaurants = computed(() => restaurantsStore.topRestaurants);
 </script>
 
 <style>

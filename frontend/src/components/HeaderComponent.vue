@@ -26,9 +26,17 @@
         Зарегистрироваться
       </v-btn>
 
-      <v-btn v-else icon to="/profile">
-        <v-icon>mdi-account</v-icon>
-      </v-btn>
+      <div v-else class="header-icon d-flex justify-center align-end">
+        <v-btn
+          variant="outlined"
+          color="white"
+          class="header-icon__btn"
+          rounded="0"
+          to="/profile"
+        >
+          <v-icon color="white">mdi-account</v-icon>
+        </v-btn>
+      </div>
     </v-container>
   </v-app-bar>
 </template>
@@ -74,5 +82,9 @@ const props = defineProps({
 .headerbtn {
   margin: 0px;
   font-family: "Cormorant Garamond", serif;
+}
+
+.header-icon {
+  width: 214px;
 }
 </style>

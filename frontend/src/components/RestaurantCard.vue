@@ -1,10 +1,7 @@
 <template>
   <div
     class="restaurant-card"
-    :style="{
-      width: `${width}px`,
-      height: `${height}px`,
-    }"
+    :style="{ width: `${width}px`, height: `${height}px` }"
   >
     <img class="card-image" :src="image" @error="onImageError" />
 
@@ -39,11 +36,12 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useRestaurantsStore } from "@/stores/restaurantsStore";
 import fallbackImg from "@/assets/no-image.png";
 
-defineProps({
+const props = defineProps({
   name: String,
   image: String,
   id: [Number, String],
@@ -51,20 +49,38 @@ defineProps({
   height: { type: [Number, String], default: 400 },
 });
 
-const isFavorite = ref(false);
 const router = useRouter();
+const restaurantsStore = useRestaurantsStore();
 
-function toggleFavorite() {
-  isFavorite.value = !isFavorite.value;
+const isFavorite = computed(() => {
+  return restaurantsStore.favorites.some((r) => r.id === props.id);
+});
+
+async function toggleFavorite() {
+  try {
+    if (isFavorite.value) {
+      await restaurantsStore.removeRestaurantFromFavorites(props.id);
+    } else {
+      await restaurantsStore.addRestaurantInFavorites(props.id);
+    }
+  } catch (e) {
+    console.error("Ошибка при добавлении/удалении избранного", e);
+  }
 }
 
 function goToRestaurant() {
-  router.push(`/restaurants/${id}`);
+  router.push(`/restaurants/${props.id}`);
 }
 
 function onImageError(e) {
   e.target.src = fallbackImg;
 }
+
+onMounted(async () => {
+  if (!restaurantsStore.favorites.length) {
+    await restaurantsStore.fetchFavorites();
+  }
+});
 </script>
 
 <style>
