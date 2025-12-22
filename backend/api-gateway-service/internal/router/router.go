@@ -48,6 +48,7 @@ func SetupRouter(cfg *config.Config) *gin.Engine {
 	publicRestaurant := r.Group("/api/restaurants")
 	{
 		publicRestaurant.GET("", restaurantProxy)
+		publicRestaurant.GET("/top", restaurantProxy)
 		publicRestaurant.GET("/:id", restaurantProxy)
 		publicRestaurant.GET("/:id/reviews", restaurantProxy)
 	}

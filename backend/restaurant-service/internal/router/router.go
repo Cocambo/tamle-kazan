@@ -15,6 +15,7 @@ func SetupRouter(h *handlers.Handlers, photosDir string) *gin.Engine {
 	public := router.Group("/restaurants")
 	{
 		public.GET("", h.GetRestaurants)
+		public.GET("/top", h.GetTopRestaurants)
 		public.GET("/:id", h.GetRestaurantByID)
 		public.GET("/:id/reviews", h.GetReviews)
 	}
