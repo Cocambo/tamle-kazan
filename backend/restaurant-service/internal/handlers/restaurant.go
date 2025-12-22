@@ -106,3 +106,30 @@ func (h *Handlers) GetTopRestaurants(c *gin.Context) {
 
 	c.JSON(http.StatusOK, restaurants)
 }
+
+func (h *Handlers) GetTopUserRestaurants(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	// Получаем user_id из заголовка
+	userIDStr := c.GetHeader("X-User-ID")
+	if userIDStr == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "user_id is required"})
+		return
+	}
+
+	userIDUint64, err := strconv.ParseUint(userIDStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user_id"})
+		return
+	}
+
+	userID := uint(userIDUint64)
+
+	restaurants, err := h.service.GetTopRestaurantsByUser(ctx, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, restaurants)
+}

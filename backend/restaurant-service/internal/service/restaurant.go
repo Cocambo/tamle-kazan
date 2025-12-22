@@ -39,3 +39,8 @@ func (s *Service) GetRestaurantByID(ctx context.Context, id uint) (*models.Resta
 func (s *Service) GetTopRestaurants(ctx context.Context, limit int) ([]models.Restaurant, error) {
 	return s.repo.GetTopRestaurants(ctx, limit)
 }
+
+// GetTopRestaurantsByUser получает топ ресторанов по рейтингу для конкретного пользователя, для профиля
+func (s *Service) GetTopRestaurantsByUser(ctx context.Context, userID uint) ([]models.Restaurant, error) {
+	return s.repo.GetTopRestaurantsByUser(ctx, userID, 3)
+}

@@ -87,6 +87,25 @@ func (r *Repository) GetTopRestaurants(ctx context.Context, limit int) ([]models
 	return restaurants, err
 }
 
+// Получаем топ ресторанов по рейтингу для конкретного пользователя, для отображения именно в профиле
+func (r *Repository) GetTopRestaurantsByUser(ctx context.Context, userID uint, limit int) ([]models.Restaurant, error) {
+	var restaurants []models.Restaurant
+
+	err := r.db.WithContext(ctx).
+		Model(&models.Restaurant{}).
+		Joins(`
+			JOIN reviews 
+			ON reviews.restaurant_id = restaurants.id
+		`).
+		Where("reviews.user_id = ?", userID).
+		Order("restaurants.rating DESC").
+		Limit(limit).
+		Preload("Photos", "is_main = true").
+		Find(&restaurants).Error
+
+	return restaurants, err
+}
+
 // Обновляем рейтинг и количество отзывов ресторана
 func (r *Repository) UpdateRestaurantRating(ctx context.Context, restaurantID uint, rating float64, reviewsCount int) error {
 	return r.db.WithContext(ctx).
