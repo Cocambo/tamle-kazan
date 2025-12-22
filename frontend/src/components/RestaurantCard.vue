@@ -2,11 +2,12 @@
   <div
     class="restaurant-card"
     :style="{
-      backgroundImage: `url(${image})`,
-      width: `${props.width}px`,
-      height: `${props.height}px`,
+      width: `${width}px`,
+      height: `${height}px`,
     }"
   >
+    <img class="card-image" :src="image" @error="onImageError" />
+
     <div class="overlay"></div>
 
     <div class="card-content pa-4">
@@ -40,8 +41,9 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import fallbackImg from "@/assets/no-image.png";
 
-const props = defineProps({
+defineProps({
   name: String,
   image: String,
   id: [Number, String],
@@ -57,26 +59,32 @@ function toggleFavorite() {
 }
 
 function goToRestaurant() {
-  console.log(`Переход к ресторану: ${props.name}`);
+  router.push(`/restaurants/${id}`);
+}
+
+function onImageError(e) {
+  e.target.src = fallbackImg;
 }
 </script>
 
 <style>
 .restaurant-card {
   position: relative;
-  background-size: cover;
-  background-position: center;
-  border-radius: 0;
-  cursor: pointer;
   overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  cursor: pointer;
   transition: transform 0.3s ease;
 }
 
 .restaurant-card:hover {
   transform: scale(1.02);
+}
+
+.card-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .overlay {
