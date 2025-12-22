@@ -39,6 +39,7 @@ func SetupRouter(cfg *config.Config) *gin.Engine {
 	auth.Use(middleware.JWTMiddleware(cfg.JwtSecret))
 	{
 		auth.GET("/profile", proxy.UserProfileProxy(cfg.UserServiceURL))
+		auth.GET("/profile/top", proxy.NewProxy(cfg.RestaurantServiceURL, "/api/user/"))
 
 	}
 
