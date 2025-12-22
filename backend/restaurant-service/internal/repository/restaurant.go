@@ -73,6 +73,20 @@ func (r *Repository) GetRestaurantByID(ctx context.Context, id uint) (*models.Re
 	return &restaurant, err
 }
 
+// Получаем топ ресторанов по рейтингу
+func (r *Repository) GetTopRestaurants(ctx context.Context, limit int) ([]models.Restaurant, error) {
+	var restaurants []models.Restaurant
+
+	err := r.db.WithContext(ctx).
+		Model(&models.Restaurant{}).
+		Order("rating DESC").
+		Limit(limit).
+		Preload("Photos", "is_main = true").
+		Find(&restaurants).Error
+
+	return restaurants, err
+}
+
 // Обновляем рейтинг и количество отзывов ресторана
 func (r *Repository) UpdateRestaurantRating(ctx context.Context, restaurantID uint, rating float64, reviewsCount int) error {
 	return r.db.WithContext(ctx).

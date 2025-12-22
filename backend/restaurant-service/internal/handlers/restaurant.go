@@ -90,3 +90,19 @@ func (h *Handlers) GetRestaurantByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, restaurant)
 }
+
+func (h *Handlers) GetTopRestaurants(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	const topLimit = 3
+
+	restaurants, err := h.service.GetTopRestaurants(ctx, topLimit)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, restaurants)
+}

@@ -34,3 +34,8 @@ func (s *Service) GetRestaurants(ctx context.Context, filter RestaurantFilter) (
 func (s *Service) GetRestaurantByID(ctx context.Context, id uint) (*models.Restaurant, error) {
 	return s.repo.GetRestaurantByID(ctx, id)
 }
+
+// GetTopRestaurants передает вызов репозиторию для получения топ ресторанов по рейтингу
+func (s *Service) GetTopRestaurants(ctx context.Context, limit int) ([]models.Restaurant, error) {
+	return s.repo.GetTopRestaurants(ctx, limit)
+}
