@@ -5,20 +5,33 @@
       <p class="recommendation-section__subtitle">{{ subtitle }}</p>
     </div>
 
-    <ThreeRestaurantsComponent
-      :restaurants="restaurantsStore.recommendationRestaurants"
-      :card-width="300"
-      :card-height="400"
-    />
+    <template v-if="authStore.isAuthenticated">
+      <ThreeRestaurantsComponent
+        :restaurants="restaurantsStore.recommendationRestaurants"
+        :card-width="300"
+        :card-height="400"
+      />
 
-    <div class="recommendation-section__actions">
+      <div class="recommendation-section__actions">
+        <v-btn
+          color="primary"
+          class="recommendation-section__button"
+          rounded="0"
+          to="/restaurants"
+        >
+          Смотреть все рестораны
+        </v-btn>
+      </div>
+    </template>
+
+    <div v-else class="recommendation-section__guest">
       <v-btn
         color="primary"
         class="recommendation-section__button"
         rounded="0"
-        to="/restaurants"
+        to="/auth"
       >
-        Смотреть все рестораны
+        Войти в личный кабинет
       </v-btn>
     </div>
   </section>
@@ -34,25 +47,25 @@ const authStore = useAuthStore();
 const restaurantsStore = useRestaurantsStore();
 
 const title = computed(() =>
-  authStore.isAuthenticated ? "Рекомендации для вас" : "Популярные рестораны"
+  authStore.isAuthenticated ? "Рекомендации для вас" : "Персональные рекомендации"
 );
 
 const subtitle = computed(() =>
   authStore.isAuthenticated
     ? "Подобрали рестораны по вашим избранным и отзывам. Если данных пока мало, покажем лучшие места города."
-    : "Начните с самых популярных мест города. После авторизации мы сможем показывать персональные рекомендации."
+    : "Войдите в личный кабинет, чтобы получить персональные рекомендации на основе избранного и ваших отзывов."
 );
 
 onMounted(async () => {
-  if (authStore.isAuthenticated) {
-    await Promise.all([
-      restaurantsStore.fetchFavorites(),
-      restaurantsStore.fetchRecommendationRestaurants(),
-    ]);
+  if (!authStore.isAuthenticated) {
+    restaurantsStore.recommendationRestaurants = [];
     return;
   }
 
-  await restaurantsStore.fetchRecommendationRestaurants();
+  await Promise.all([
+    restaurantsStore.fetchFavorites(),
+    restaurantsStore.fetchRecommendationRestaurants(),
+  ]);
 });
 </script>
 
@@ -86,6 +99,12 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
   margin-top: 40px;
+}
+
+.recommendation-section__guest {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
 }
 
 .recommendation-section__button {

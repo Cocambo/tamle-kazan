@@ -234,13 +234,12 @@ export const useRestaurantsStore = defineStore("restaurants", {
       try {
         this.loading = true;
 
-        if (authStore.isAuthenticated) {
-          const { data } = await restaurantsApi.getRecommendations();
-          this.recommendationRestaurants = data;
-          return data;
+        if (!authStore.isAuthenticated) {
+          this.recommendationRestaurants = [];
+          return [];
         }
 
-        const { data } = await restaurantsApi.getTopRestaurants();
+        const { data } = await restaurantsApi.getRecommendations();
         this.recommendationRestaurants = data;
         return data;
       } catch (e) {

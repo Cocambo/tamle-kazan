@@ -3,7 +3,9 @@ package service
 import (
 	"context"
 	"math"
+	"math/rand"
 	"sort"
+	"time"
 
 	"restaurant-service/internal/models"
 )
@@ -11,6 +13,8 @@ import (
 const (
 	highRatingThreshold        = 4
 	recommendationCandidateCap = 20
+	recommendationPoolLimit    = 7
+	topRestaurantsLimit        = 3
 )
 
 type preferenceProfile struct {
@@ -37,7 +41,7 @@ func (s *Service) GetRecommendationsByUser(ctx context.Context, userID uint, lim
 
 	likedRestaurants := mergeUniqueRestaurants(favorites, highRated)
 	if len(likedRestaurants) == 0 {
-		return s.repo.GetPopularRestaurantsExcluding(ctx, nil, limit)
+		return s.getColdStartRecommendations(ctx, nil, limit)
 	}
 
 	profile := buildPreferenceProfile(likedRestaurants)
@@ -61,7 +65,7 @@ func (s *Service) GetRecommendationsByUser(ctx context.Context, userID uint, lim
 	}
 
 	if len(candidates) == 0 {
-		return s.repo.GetPopularRestaurantsExcluding(ctx, profile.ExcludeIDs, limit)
+		return s.getColdStartRecommendations(ctx, profile.ExcludeIDs, limit)
 	}
 
 	scored := make([]scoredRestaurant, 0, len(candidates))
@@ -88,6 +92,28 @@ func (s *Service) GetRecommendationsByUser(ctx context.Context, userID uint, lim
 	}
 
 	return result, nil
+}
+
+func (s *Service) getColdStartRecommendations(ctx context.Context, excludeIDs []uint, limit int) ([]models.Restaurant, error) {
+	pool, err := s.repo.GetPopularRestaurantsExcluding(ctx, excludeIDs, recommendationPoolLimit)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(pool) == 0 {
+		return []models.Restaurant{}, nil
+	}
+
+	selectionPool := pool
+	if len(pool) > topRestaurantsLimit {
+		selectionPool = pool[topRestaurantsLimit:]
+	}
+
+	if len(selectionPool) < limit {
+		selectionPool = pool
+	}
+
+	return pickRandomRestaurants(selectionPool, limit), nil
 }
 
 func buildPreferenceProfile(restaurants []models.Restaurant) preferenceProfile {
@@ -179,4 +205,18 @@ func getTopCuisines(cuisineCount map[string]int, limit int) []string {
 	}
 
 	return result
+}
+
+func pickRandomRestaurants(restaurants []models.Restaurant, limit int) []models.Restaurant {
+	if len(restaurants) <= limit {
+		return restaurants
+	}
+
+	shuffled := append([]models.Restaurant(nil), restaurants...)
+	randomizer := rand.New(rand.NewSource(time.Now().UnixNano()))
+	randomizer.Shuffle(len(shuffled), func(i, j int) {
+		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
+	})
+
+	return shuffled[:limit]
 }
