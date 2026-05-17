@@ -23,7 +23,7 @@ import ThreeRestaurantsComponent from "@/components/ThreeRestaurantsComponent.vu
 const store = useRestaurantsStore();
 
 onMounted(() => {
-  store.fetchFavorites();
+  store.fetchFavorites({ force: true });
 });
 </script>
 

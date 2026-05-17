@@ -26,8 +26,11 @@ import ThreeRestaurantsComponent from "@/components/ThreeRestaurantsComponent.vu
 
 const restaurantsStore = useRestaurantsStore();
 
-onMounted(() => {
-  restaurantsStore.fetchTopRestaurants();
+onMounted(async () => {
+  await Promise.all([
+    restaurantsStore.fetchTopRestaurants(),
+    restaurantsStore.fetchFavorites(),
+  ]);
 });
 
 const topRestaurants = computed(() => restaurantsStore.topRestaurants);

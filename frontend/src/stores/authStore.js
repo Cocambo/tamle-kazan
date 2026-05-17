@@ -59,6 +59,11 @@ export const useAuthStore = defineStore('auth', {
             if (this.refreshToken) {
                 await authApi.logout(this.refreshToken);
             }
+
+            const { useRestaurantsStore } = await import("@/stores/restaurantsStore");
+            const restaurantsStore = useRestaurantsStore();
+            restaurantsStore.resetFavoritesState();
+
             this.user = null;
             this.accessToken = null;
             this.refreshToken = null;

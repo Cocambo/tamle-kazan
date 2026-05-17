@@ -89,7 +89,10 @@ const resendConfirmation = async () => {
 };
 
 onMounted(async () => {
-  await restaurantsStore.fetchTopUserRestaurants();
+  await Promise.all([
+    restaurantsStore.fetchFavorites(),
+    restaurantsStore.fetchTopUserRestaurants(),
+  ]);
 });
 </script>
 

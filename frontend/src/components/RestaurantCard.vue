@@ -36,8 +36,9 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/authStore";
 import { useRestaurantsStore } from "@/stores/restaurantsStore";
 import fallbackImg from "@/assets/no-image.png";
 
@@ -50,16 +51,27 @@ const props = defineProps({
 });
 
 const router = useRouter();
+const authStore = useAuthStore();
 const restaurantsStore = useRestaurantsStore();
 
-const isFavorite = computed(() => restaurantsStore.favoriteIds.has(props.id));
+const normalizedId = computed(() => {
+  const id = Number(props.id);
+  return Number.isNaN(id) ? props.id : id;
+});
+
+const isFavorite = computed(() => restaurantsStore.favoriteIds.has(normalizedId.value));
 
 async function toggleFavorite() {
   try {
+    if (!authStore.isAuthenticated) {
+      router.push("/auth");
+      return;
+    }
+
     if (isFavorite.value) {
-      await restaurantsStore.removeRestaurantFromFavorites(props.id);
+      await restaurantsStore.removeRestaurantFromFavorites(normalizedId.value);
     } else {
-      await restaurantsStore.addRestaurantInFavorites(props.id);
+      await restaurantsStore.addRestaurantInFavorites(normalizedId.value);
     }
   } catch (e) {
     console.error("Ошибка при добавлении/удалении избранного", e);
@@ -73,10 +85,6 @@ function goToRestaurant() {
 function onImageError(e) {
   e.target.src = fallbackImg;
 }
-
-onMounted(async () => {
-  await restaurantsStore.fetchFavorites();
-});
 </script>
 
 <style>
