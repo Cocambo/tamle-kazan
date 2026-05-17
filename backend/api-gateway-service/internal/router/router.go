@@ -33,6 +33,9 @@ func SetupRouter(cfg *config.Config) *gin.Engine {
 
 		publicUser.GET("/confirm-email", userProxy)
 		publicUser.POST("/resend-confirmation", userProxy)
+
+		publicUser.GET("/users/:id", userProxy)
+
 	}
 	// Закрытые маршруты с JWT аутентификацией
 	auth := r.Group("/api/user")

@@ -3,6 +3,7 @@ import { useAuthStore } from '@/stores/authStore'
 
 import HomeView from '@/views/HomeView.vue'
 import RestaurantsView from '@/views/RestaurantsView.vue'
+import OneRestaurantView from '@/views/OneRestaurantView.vue'
 import FavouriteView from '@/views/FavouriteView.vue'
 import LoginView from '@/views/LoginView.vue'
 import AuthenticationView from '@/views/AuthenticationView.vue'
@@ -25,6 +26,12 @@ const routes = [
         path: '/restaurants',
         name: 'Restaurants',
         component: RestaurantsView,
+    },
+    {
+        path: '/restaurants/:id',
+        name: 'OneRestaurant',
+        component: OneRestaurantView,
+        props: true,
     },
     {
         path: '/favourite',

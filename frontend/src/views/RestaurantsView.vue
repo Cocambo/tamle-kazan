@@ -103,8 +103,8 @@ const ratings = [0, 4, 4.5, 5];
 
 const store = useRestaurantsStore();
 
-onMounted(() => {
-  updateRestaurants();
+onMounted(async () => {
+  await Promise.all([store.fetchFavorites(), updateRestaurants()]);
 });
 
 function updateRestaurants() {

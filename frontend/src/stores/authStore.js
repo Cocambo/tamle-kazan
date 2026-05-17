@@ -40,12 +40,11 @@ export const useAuthStore = defineStore('auth', {
             this.user = data;
         },
 
-
-
         async resendEmailConfirmation() {
             if (!this.user?.email) return;
             await authApi.resendConfirmation(this.user.email);
         },
+        
         async initAuth() {
             if (this.accessToken && !this.user) {
                 try {
