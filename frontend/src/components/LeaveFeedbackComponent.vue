@@ -1,41 +1,58 @@
 <template>
   <v-container class="feedback-form d-flex justify-center align-center">
     <VCard class="feedback-form__card pa-8" elevation="3" rounded="0">
-      <h1 class="feedback-form__title text-center mb-6">Оставьте отзыв</h1>
+      <template v-if="authStore.isAuthenticated">
+        <h1 class="feedback-form__title text-center mb-6">Оставьте отзыв</h1>
 
-      <VForm @submit.prevent="leave">
-        <div class="rating-block mb-4">
-          <span class="rating-label">Оценка:</span>
-          <VRating
-            v-model="mark"
-            length="5"
-            color="primary"
-            density="comfortable"
-          />
-        </div>
+        <VForm @submit.prevent="leave">
+          <div class="rating-block mb-4">
+            <span class="rating-label">Оценка:</span>
+            <VRating
+              v-model="mark"
+              length="5"
+              color="primary"
+              density="comfortable"
+            />
+          </div>
 
-        <VTextarea
-          v-model="feedback"
-          label="Комментарий"
-          variant="outlined"
-          rounded="0"
-          rows="3"
-          hide-details
-          class="mb-6"
-        />
-
-        <div class="text-center">
-          <VBtn
-            class="register-btn"
-            type="submit"
+          <VTextarea
+            v-model="feedback"
+            label="Комментарий"
+            variant="outlined"
             rounded="0"
-            :loading="reviewsStore.loading"
-          >
-            Отправить
+            rows="3"
+            hide-details
+            class="mb-6"
+          />
+
+          <div class="text-center">
+            <VBtn
+              class="register-btn"
+              type="submit"
+              rounded="0"
+              :loading="reviewsStore.loading"
+            >
+              Отправить
+            </VBtn>
+          </div>
+        </VForm>
+      </template>
+
+      <template v-else>
+        <h1 class="feedback-form__title text-center mb-6">Отзывы</h1>
+
+        <div class="auth-required text-center">
+          <p class="auth-required__text">
+            Чтобы оставить отзыв, необходимо авторизоваться и войти в личный кабинет.
+          </p>
+
+          <VBtn class="register-btn" rounded="0" to="/auth">
+            Войти
           </VBtn>
         </div>
-      </VForm>
+      </template>
     </VCard>
+
     <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="3000">
       {{ snackbarText }}
     </v-snackbar>
@@ -45,11 +62,12 @@
 <script setup>
 import { ref } from "vue";
 import { useRoute } from "vue-router";
+import { useAuthStore } from "@/stores/authStore";
 import { useReviewsStore } from "@/stores/reviewsStore";
 import { useRestaurantsStore } from "@/stores/restaurantsStore";
 
+const authStore = useAuthStore();
 const restaurantsStore = useRestaurantsStore();
-
 const reviewsStore = useReviewsStore();
 const route = useRoute();
 
@@ -67,6 +85,11 @@ const showToast = (message, color = "warning") => {
 };
 
 const leave = async () => {
+  if (!authStore.isAuthenticated) {
+    showToast("Чтобы оставить отзыв, необходимо авторизоваться", "warning");
+    return;
+  }
+
   const restaurantId = route.params.id;
 
   await reviewsStore.createRestaurantReview(restaurantId, {
@@ -98,6 +121,20 @@ const leave = async () => {
   color: rgb(var(--v-theme-primary));
   font-weight: 700;
   font-size: 40px;
+}
+
+.auth-required {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.auth-required__text {
+  max-width: 320px;
+  color: rgb(var(--v-theme-primary));
+  font-size: 20px;
+  line-height: 1.4;
 }
 
 .rating-block {
