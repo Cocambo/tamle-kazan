@@ -6,6 +6,8 @@ export const useRestaurantsStore = defineStore("restaurants", {
     restaurants: [],
     currentRestaurant: null,
     favorites: [],
+    favouriteIds: new Set(),
+    favouritesLoaded: false,
     topRestaurants: [],
     topUserRestaurants: [],
     loading: false,
@@ -37,10 +39,13 @@ export const useRestaurantsStore = defineStore("restaurants", {
     },
 
     async fetchFavorites() {
+      if (this.favoritesLoaded) return;
       try {
         this.loading = true;
         const { data } = await restaurantsApi.getFavorites();
         this.favorites = data.restaurants || [];
+        this.favoriteIds = new Set(this.favorites.map(r => r.id));
+        this.favoritesLoaded = true;
       } catch (e) {
         console.error("Ошибка загрузки избранного", e);
       } finally {
@@ -54,6 +59,7 @@ export const useRestaurantsStore = defineStore("restaurants", {
         const { data, status } = await restaurantsApi.addToFavorites(id);
         if (status === 201) {
           this.favorites.push({ id });
+          this.favouriteIds.add(id);
           console.log(data.message);
         }
       } catch (e) {
@@ -72,6 +78,7 @@ export const useRestaurantsStore = defineStore("restaurants", {
         this.loading = true;
         const { data } = await restaurantsApi.removeFromFavorites(id);
         this.favorites = this.favorites.filter(r => r.id !== id);
+        this.favoriteIds.delete(id);
         console.log(data.message);
       } catch (e) {
         if (e.response?.status === 404) {
@@ -97,15 +104,15 @@ export const useRestaurantsStore = defineStore("restaurants", {
     },
 
     async fetchTopUserRestaurants() {
-    try {
-      this.loading = true;
-      const { data } = await restaurantsApi.getTopUserRestaurants();
-      this.topUserRestaurants = data;
-    } catch (e) {
-      console.error("Ошибка загрузки топ-ресторанов пользователя", e);
-    } finally {
-      this.loading = false;
-    }
-  },
+      try {
+        this.loading = true;
+        const { data } = await restaurantsApi.getTopUserRestaurants();
+        this.topUserRestaurants = data;
+      } catch (e) {
+        console.error("Ошибка загрузки топ-ресторанов пользователя", e);
+      } finally {
+        this.loading = false;
+      }
+    },
   },
 });

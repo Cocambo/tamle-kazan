@@ -52,9 +52,7 @@ const props = defineProps({
 const router = useRouter();
 const restaurantsStore = useRestaurantsStore();
 
-const isFavorite = computed(() => {
-  return restaurantsStore.favorites.some((r) => r.id === props.id);
-});
+const isFavorite = computed(() => restaurantsStore.favoriteIds.has(props.id));
 
 async function toggleFavorite() {
   try {
@@ -77,9 +75,7 @@ function onImageError(e) {
 }
 
 onMounted(async () => {
-  if (!restaurantsStore.favorites.length) {
-    await restaurantsStore.fetchFavorites();
-  }
+  await restaurantsStore.fetchFavorites();
 });
 </script>
 
