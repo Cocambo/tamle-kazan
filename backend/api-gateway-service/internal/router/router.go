@@ -61,6 +61,7 @@ func SetupRouter(cfg *config.Config) *gin.Engine {
 	authorizedRestaurant.Use(middleware.JWTMiddleware(cfg.JwtSecret))
 	{
 		authorizedRestaurant.GET("/favorites", restaurantProxy)
+		authorizedRestaurant.GET("/recommendations", restaurantProxy)
 		authorizedRestaurant.POST("/:id/reviews", restaurantProxy)
 		authorizedRestaurant.POST("/:id/favorite", restaurantProxy)
 		authorizedRestaurant.DELETE("/:id/favorite", restaurantProxy)

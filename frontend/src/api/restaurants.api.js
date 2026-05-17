@@ -25,6 +25,10 @@ export const restaurantsApi = {
     return http.get("/restaurants/top");
   },
 
+  getRecommendations() {
+    return http.get("/restaurants/recommendations");
+  },
+
   getTopUserRestaurants() {
     return http.get("/user/profile/top");
   },

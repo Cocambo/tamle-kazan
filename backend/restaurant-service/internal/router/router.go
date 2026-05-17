@@ -24,6 +24,7 @@ func SetupRouter(h *handlers.Handlers, photosDir string) *gin.Engine {
 	authorized := router.Group("/restaurants")
 	{
 		authorized.GET("/favorites", h.GetUserFavorites)
+		authorized.GET("/recommendations", h.GetRecommendations)
 		authorized.GET("/profile/top", h.GetTopUserRestaurants)
 		authorized.POST("/:id/reviews", h.CreateReview)
 		authorized.POST("/:id/favorite", h.AddFavorite)

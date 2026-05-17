@@ -17,6 +17,7 @@ export const useRestaurantsStore = defineStore("restaurants", {
     favoritesPromise: null,
     topRestaurants: [],
     topUserRestaurants: [],
+    recommendationRestaurants: [],
     loading: false,
   }),
 
@@ -34,6 +35,7 @@ export const useRestaurantsStore = defineStore("restaurants", {
         this.restaurants.find((item) => normalizeRestaurantId(item.id) === normalizedId) ||
         this.topRestaurants.find((item) => normalizeRestaurantId(item.id) === normalizedId) ||
         this.topUserRestaurants.find((item) => normalizeRestaurantId(item.id) === normalizedId) ||
+        this.recommendationRestaurants.find((item) => normalizeRestaurantId(item.id) === normalizedId) ||
         (this.currentRestaurant &&
         normalizeRestaurantId(this.currentRestaurant.id) === normalizedId
           ? this.currentRestaurant
@@ -221,6 +223,30 @@ export const useRestaurantsStore = defineStore("restaurants", {
         this.topUserRestaurants = data;
       } catch (e) {
         console.error("Ошибка загрузки топ-ресторанов пользователя", e);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async fetchRecommendationRestaurants() {
+      const authStore = useAuthStore();
+
+      try {
+        this.loading = true;
+
+        if (authStore.isAuthenticated) {
+          const { data } = await restaurantsApi.getRecommendations();
+          this.recommendationRestaurants = data;
+          return data;
+        }
+
+        const { data } = await restaurantsApi.getTopRestaurants();
+        this.recommendationRestaurants = data;
+        return data;
+      } catch (e) {
+        console.error("Ошибка загрузки рекомендаций", e);
+        this.recommendationRestaurants = [];
+        return [];
       } finally {
         this.loading = false;
       }
